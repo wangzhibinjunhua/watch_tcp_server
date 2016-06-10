@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * This file is part of workerman.
  *
@@ -21,27 +21,22 @@ use \Workerman\Autoloader;
 require_once __DIR__ . '/../../Workerman/Autoloader.php';
 Autoloader::setRootPath(__DIR__);
 
-// gateway 进程，这里使用Text协议，可以用telnet测试
-//$gateway = new Gateway("Text://120.24.36.177:8282");
-$gateway = new Gateway("tcp://120.24.36.177:8282");
-// gateway名称，status方便查看
-$gateway->name = 'YourAppGateway';
-// gateway进程数
-$gateway->count = 4;
-// 本机ip，分布式部署时使用内网ip
-$gateway->lanIp = '127.0.0.1';
-// 内部通讯起始端口，假如$gateway->count=4，起始端口为4000
-// 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口 
-$gateway->startPort = 2900;
-// 服务注册地址
-$gateway->registerAddress = '127.0.0.1:1238';
+// #### 内部推送端口(假设当前服务器内网ip为192.168.100.100) ####
+//$internal_gateway = new Gateway("Text://10.44.125.196:8283");
+$internal_gateway = new Gateway("Text://0.0.0.0:8283");
+$internal_gateway->name='internalGateway';
+$internal_gateway->startPort = 2800;
+// 端口为start_register.php中监听的端口，聊天室默认是1236
+$internal_gateway->registerAddress = '127.0.0.1:1238';
+// #### 内部推送端口设置完毕 ####
 
 // 心跳间隔
 //$gateway->pingInterval = 10;
 // 心跳数据
 //$gateway->pingData = '{"type":"ping"}';
 
-/* 
+
+/*
 // 当客户端连接上来时，设置连接的onWebSocketConnect，即在websocket握手时的回调
 $gateway->onConnect = function($connection)
 {
@@ -56,7 +51,7 @@ $gateway->onConnect = function($connection)
         // onWebSocketConnect 里面$_GET $_SERVER是可用的
         // var_dump($_GET, $_SERVER);
     };
-}; 
+};
 */
 
 // 如果不是在根目录启动，则运行runAll方法

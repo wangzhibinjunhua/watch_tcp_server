@@ -35,10 +35,11 @@ class Events
      * @param int $client_id 连接id
      */
     public static function onConnect($client_id) {
-        // 向当前client_id发送数据 
-        Gateway::sendToClient($client_id, "Hello $client_id");
+        //echo $client_id."\n";
+        // 向当前client_id发送数据
+        //Gateway::sendToClient($client_id, "Hello $client_id");
         // 向所有人发送
-        Gateway::sendToAll("$client_id login");
+        //Gateway::sendToAll("$client_id login");
     }
     
    /**
@@ -46,9 +47,61 @@ class Events
     * @param int $client_id 连接id
     * @param mixed $message 具体消息
     */
+
    public static function onMessage($client_id, $message) {
-        // 向所有人发送 
-        Gateway::sendToAll("$client_id said $message");
+        echo $message."\n";
+
+        $message_data=json_decode($message,true);
+        if(!$message_data){
+          $len=hexdec(substr($message,0,4));
+          $type=substr($message,4,3);
+          $imei=substr($message,7,16);
+          $cmd=substr($message,24,2);
+          $msg=substr($message,26,$len-22);
+          echo "len= $len \n";
+          echo "type= $type \n ";
+          echo "imei= $imei \n ";
+          echo "cmd= $cmd \n ";
+          echo "msg= $msg \n";
+          //有效数据
+          if($type == 'CS*'){
+              Gateway::bindUid($client_id, $imei);
+
+              switch($cmd)
+              {
+                //链路保持
+                case 'LK':
+                  $tempstr="乱码了吗";
+                  Gateway::sendToUid($imei,substr($message,0,26).$tempstr);
+                  Gateway::joinGroup($client_id,"123");
+                  return;
+
+                //位置上报
+                case 'UD':
+                  Gateway::sendToUid($imei,$msg);
+                  return;
+              }
+          }
+        }else{
+
+            switch ($message_data['type']) {
+              case 'send':
+                # code...
+                $new_message1=array('type'=>'pk','msg'=>'test');
+                Gateway::sendToUid($message_data['user'],json_encode($new_message1));
+                break;
+              case 'getlist':
+                $list=Gateway::getClientInfoByGroup("123");
+                $new_message=array('type'=>'pk','msg'=>'test2');
+                $new_message['list']=$list;
+                Gateway::sendToUid($message_data['user'],json_encode($new_message));
+                break;
+              default:
+                # code...
+                break;
+            }
+        }
+
    }
    
    /**
@@ -56,7 +109,7 @@ class Events
     * @param int $client_id 连接id
     */
    public static function onClose($client_id) {
-       // 向所有人发送 
-       GateWay::sendToAll("$client_id logout");
+       // 向所有人发送
+       //GateWay::sendToAll("$client_id logout");
    }
 }
