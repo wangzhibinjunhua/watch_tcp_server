@@ -1,5 +1,13 @@
+
+# watch_tcp_server
+## 1.基于workerman&gatewayworker 的tcp服务器
+- 用于儿童手表的tcp服务器,与手表终端设备通信
+
+
+
+
 GatewayWorker (版本2.0.3)
-=================
+
 
 GatewayWorker基于[Workerman](https://github.com/walkor/Workerman)开发的一个项目框架，用于快速开发长连接应用，例如app推送服务端、即时IM服务端、游戏服务端、物联网、智能家居等等。
 
@@ -51,14 +59,7 @@ haha
 =======
 http://www.workerman.net/gatewaydoc/
 
-使用GatewayWorker开发的项目
-=======
-## [tadpole](http://kedou.workerman.net/)  
-[Live demo](http://kedou.workerman.net/)  
-[Source code](https://github.com/walkor/workerman)  
-![workerman todpole](http://www.workerman.net/img/workerman-todpole.png)   
 
-## [chat room](http://chat.workerman.net/)  
-[Live demo](http://chat.workerman.net/)  
-[Source code](https://github.com/walkor/workerman-chat)  
-![workerman-chat](http://www.workerman.net/img/workerman-chat.png)  
+
+
+
