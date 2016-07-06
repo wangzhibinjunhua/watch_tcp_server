@@ -25,6 +25,7 @@ Autoloader::setRootPath(__DIR__);
 //$internal_gateway = new Gateway("Text://10.44.125.196:8283");
 $internal_gateway = new Gateway("Text://0.0.0.0:8283");
 $internal_gateway->name='internalGateway';
+$internal_gateway->count=8;
 $internal_gateway->startPort = 2800;
 // 端口为start_register.php中监听的端口，聊天室默认是1236
 $internal_gateway->registerAddress = '127.0.0.1:1238';

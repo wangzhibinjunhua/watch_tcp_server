@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * This file is part of workerman.
  *
@@ -27,7 +27,7 @@ $worker = new BusinessWorker();
 // worker名称
 $worker->name = 'YourAppBusinessWorker';
 // bussinessWorker进程数量
-$worker->count = 4;
+$worker->count = 8;
 // 服务注册地址
 $worker->registerAddress = '127.0.0.1:1238';
 

@@ -31,7 +31,7 @@ class Events
     /**
      * 当客户端连接时触发
      * 如果业务不需此回调可以删除onConnect
-     * 
+     *
      * @param int $client_id 连接id
      */
     public static function onConnect($client_id) {
@@ -41,7 +41,7 @@ class Events
         // 向所有人发送
         //Gateway::sendToAll("$client_id login");
     }
-    
+
    /**
     * 当客户端发来消息时触发
     * @param int $client_id 连接id
@@ -50,7 +50,8 @@ class Events
 
    public static function onMessage($client_id, $message) {
         echo $message."\n";
-
+        //$message=pack('H*',$message);
+        file_put_contents("tt.amr",$message, FILE_APPEND);
         $message_data=json_decode($message,true);
         if(!$message_data){
           $len=hexdec(substr($message,0,4));
@@ -71,14 +72,16 @@ class Events
               {
                 //链路保持
                 case 'LK':
-                  $tempstr="乱码了吗";
-                  Gateway::sendToUid($imei,substr($message,0,26).$tempstr);
-                  Gateway::joinGroup($client_id,"123");
+                  Gateway::sendToUid($imei,substr($message,0,26)."\n");
                   return;
 
                 //位置上报
                 case 'UD':
                   Gateway::sendToUid($imei,$msg);
+                  return;
+                //语音
+                case 'TK':
+                Gateway::sendToUid('1234567890123457','aaaaa'."\n");
                   return;
               }
           }
@@ -103,7 +106,7 @@ class Events
         }
 
    }
-   
+
    /**
     * 当用户断开连接时触发
     * @param int $client_id 连接id
