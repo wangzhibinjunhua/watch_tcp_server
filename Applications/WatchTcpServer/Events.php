@@ -20,7 +20,6 @@
 //declare(ticks=1);
 
 use \GatewayWorker\Lib\Gateway;
-
 /**
  * 主逻辑
  * 主要是处理 onConnect onMessage onClose 三个方法
@@ -50,59 +49,13 @@ class Events
 
    public static function onMessage($client_id, $message) {
         echo $message."\n";
-        //$message=pack('H*',$message);
-        file_put_contents("tt.amr",$message, FILE_APPEND);
         $message_data=json_decode($message,true);
+        $handle=new handle_data();
         if(!$message_data){
-          $len=hexdec(substr($message,0,4));
-          $type=substr($message,4,3);
-          $imei=substr($message,7,16);
-          $cmd=substr($message,24,2);
-          $msg=substr($message,26,$len-22);
-          echo "len= $len \n";
-          echo "type= $type \n ";
-          echo "imei= $imei \n ";
-          echo "cmd= $cmd \n ";
-          echo "msg= $msg \n";
-          //有效数据
-          if($type == 'CS*'){
-              Gateway::bindUid($client_id, $imei);
-
-              switch($cmd)
-              {
-                //链路保持
-                case 'LK':
-                  Gateway::sendToUid($imei,substr($message,0,26)."\n");
-                  return;
-
-                //位置上报
-                case 'UD':
-                  Gateway::sendToUid($imei,$msg);
-                  return;
-                //语音
-                case 'TK':
-                Gateway::sendToUid('1234567890123457','aaaaa'."\n");
-                  return;
-              }
-          }
+            $handle->handle_watch_data($client_id,$message);
         }else{
 
-            switch ($message_data['type']) {
-              case 'send':
-                # code...
-                $new_message1=array('type'=>'pk','msg'=>'test');
-                Gateway::sendToUid($message_data['user'],json_encode($new_message1));
-                break;
-              case 'getlist':
-                $list=Gateway::getClientInfoByGroup("123");
-                $new_message=array('type'=>'pk','msg'=>'test2');
-                $new_message['list']=$list;
-                Gateway::sendToUid($message_data['user'],json_encode($new_message));
-                break;
-              default:
-                # code...
-                break;
-            }
+            $handle->handle_server_data($client_id,$message_data);
         }
 
    }
@@ -115,4 +68,6 @@ class Events
        // 向所有人发送
        //GateWay::sendToAll("$client_id logout");
    }
+
+
 }

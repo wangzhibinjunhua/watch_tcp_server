@@ -25,7 +25,7 @@ Autoloader::setRootPath(__DIR__);
 // bussinessWorker 进程
 $worker = new BusinessWorker();
 // worker名称
-$worker->name = 'YourAppBusinessWorker';
+$worker->name = 'watch_server_businessWorker';
 // bussinessWorker进程数量
 $worker->count = 8;
 // 服务注册地址

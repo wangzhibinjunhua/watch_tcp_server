@@ -25,7 +25,7 @@ Autoloader::setRootPath(__DIR__);
 //$gateway = new Gateway("Text://120.24.36.177:8282");
 $gateway = new Gateway("tcp://120.76.47.120:8282");
 // gateway名称，status方便查看
-$gateway->name = 'YourAppGateway';
+$gateway->name = 'watch_server_gateway';
 // gateway进程数
 $gateway->count = 8;
 // 本机ip，分布式部署时使用内网ip
