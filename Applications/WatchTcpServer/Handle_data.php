@@ -24,11 +24,11 @@ class handle_data
           $msg_msg=explode(',',$msg_array[2]);
           $cmd=$msg_msg[0];
 
-          echo "len= $len \n";
-          echo "type= $type \n ";
-          echo "imei= $imei \n ";
-          echo "cmd= $cmd \n ";
-          echo "msg_msg= $msg_array[2] \n";
+          // echo "len= $len \n";
+          // echo "type= $type \n ";
+          // echo "imei= $imei \n ";
+          // echo "cmd= $cmd \n ";
+          // echo "msg_msg= $msg_array[2] \n";
           //有效数据
           if($type == 'CS'){
               Gateway::bindUid($client_id, $imei);
