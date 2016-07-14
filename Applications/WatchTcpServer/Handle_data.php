@@ -63,17 +63,10 @@ class handle_data
     */
    public function handle_server_data($client_id,$message)
    {
-        switch ($message_data['type']) {
+        switch ($message['type']) {
               case 'send':
-                # code...
-                $new_message1=array('type'=>'pk','msg'=>'test');
-                Gateway::sendToUid($message_data['user'],json_encode($new_message1));
-                break;
-              case 'getlist':
-                $list=Gateway::getClientInfoByGroup("123");
-                $new_message=array('type'=>'pk','msg'=>'test2');
-                $new_message['list']=$list;
-                Gateway::sendToUid($message_data['user'],json_encode($new_message));
+                echo "send"."]\n";
+                Gateway::sendToAll($message['content'].PHP_EOL);
                 break;
               default:
                 # code...
