@@ -51,8 +51,11 @@ class handle_data
                 $filename=$msg_msg[1];
                 $id=$msg_msg[2];
                 $total=$msg_msg[3];
-                $amr=$msg_msg[4];
+                //$amr=$msg_msg[4];
+                $head_len=6+strlen($filename)+strlen($id)+strlen($total)+4+15;
+                $amr=substr($msg_body,$head_len,strlen($msg_body)-$head_len);
                 file_put_contents($filename,$amr,FILE_APPEND);
+                chmod($filename,0777);
                 $rs_tk='CS*'.$imei.'*TK,1';
                 $rs_tk_len=sprintf("%04x",strlen($rs_tk));
                 Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
@@ -72,7 +75,6 @@ class handle_data
    {
         switch ($message['type']) {
               case 'send':
-                echo "send"."]\n";
                 Gateway::sendToAll($message['content']);
                 break;
               default:

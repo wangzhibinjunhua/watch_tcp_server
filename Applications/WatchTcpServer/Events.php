@@ -48,7 +48,8 @@ class Events
     */
 
    public static function onMessage($client_id, $message) {
-        echo $message."\n";
+        $showtime=date("Y-m-d H:i:s");
+        echo $message." ".$showtime."---\n";
         $message_data=json_decode($message,true);
         $handle=new Handle_data();
         if(!$message_data){
