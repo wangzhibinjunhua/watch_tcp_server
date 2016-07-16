@@ -27,7 +27,7 @@ class handle_data
           // echo "len= $len \n";
           // echo "type= $type \n ";
           // echo "imei= $imei \n ";
-          // echo "cmd= $cmd \n ";
+           echo "cmd= $cmd \n ";
           // echo "msg_msg= $msg_array[2] \n";
           //有效数据
           if($type == 'CS'){
@@ -39,16 +39,23 @@ class handle_data
                 case 'LK':
                   $rs='CS*'.$imei.'*LK';
                   $rs_len=sprintf("%04x",strlen($rs));
-                  Gateway::sendToUid($imei,$rs_len.$rs.PHP_EOL);
+                  Gateway::sendToUid($imei,$rs_len.$rs);
                   return;
 
                 //位置上报
                 case 'UD':
-                  Gateway::sendToUid($imei,$msg);
+                  Gateway::sendToUid($imei,"ud");
                   return;
                 //语音
                 case 'TK':
-                Gateway::sendToUid('1234567890123457','aaaaa'.PHP_EOL);
+                $filename=$msg_msg[1];
+                $id=$msg_msg[2];
+                $total=$msg_msg[3];
+                $amr=$msg_msg[4];
+                file_put_contents($filename,$amr,FILE_APPEND);
+                $rs_tk='CS*'.$imei.'*TK,1';
+                $rs_tk_len=sprintf("%04x",strlen($rs_tk));
+                Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
                   return;
               }
           }
@@ -66,7 +73,7 @@ class handle_data
         switch ($message['type']) {
               case 'send':
                 echo "send"."]\n";
-                Gateway::sendToAll($message['content'].PHP_EOL);
+                Gateway::sendToAll($message['content']);
                 break;
               default:
                 # code...

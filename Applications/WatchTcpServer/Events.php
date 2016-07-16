@@ -48,7 +48,7 @@ class Events
     */
 
    public static function onMessage($client_id, $message) {
-       // echo $message."\n";
+        echo $message."\n";
         $message_data=json_decode($message,true);
         $handle=new Handle_data();
         if(!$message_data){
