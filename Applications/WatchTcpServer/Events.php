@@ -53,7 +53,8 @@ class Events
         $message_data=json_decode($message,true);
         $handle=new Handle_data();
         if(!$message_data){
-            $handle->handle_watch_data($client_id,$message);
+            //$handle->handle_watch_data($client_id,$message);
+            $handle->handle_watch_data_test($client_id,$message);
         }else{
 
             $handle->handle_server_data($client_id,$message_data);
