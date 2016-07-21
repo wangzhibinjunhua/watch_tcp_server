@@ -19,10 +19,10 @@ class handle_data
           $len=hexdec(substr($message,0,4));
 
           if($tk_flag){
-              if($tk_recv_len<$tk_total_len){
+              if($tk_recv_len<$tk_total_len+4){
                 file_put_contents($filename,$message,FILE_APPEND);
                 $tk_recv_len +=strlen($message);
-              }
+              }else{
 
               $tk_flag=false;
               $tk_recv_len=0;
@@ -31,6 +31,7 @@ class handle_data
               $rs_tk_len=sprintf("%04x",strlen($rs_tk));
               Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
               return;
+            }
           }else{
 
           $msg_body=substr($message,4,strlen($message)-4);
@@ -161,8 +162,10 @@ class handle_data
         switch ($message['type']) {
               case 'send':
                 if($message['content'] == 'tk'){
-                    $data=file_get_contents('test.amr');
-                    Gateway::sendToAll($data);
+                    $file=file_get_contents('test.amr');
+                    $rs='CS*358688000000158*TK,'.$file;
+                    $rs_len=sprintf("%04x",strlen($rs));
+                    Gateway::sendToAll($rs_len.$rs);
                 }else{
                   Gateway::sendToAll($message['content']);
                 }
