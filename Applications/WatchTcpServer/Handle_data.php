@@ -11,7 +11,7 @@ class handle_data
     */
    public static function handle_watch_data_test($client_id, $message)
    {
-          static $filename="1";
+          static $filename='1.amr';
           static $tk_flag=false;
           static $tk_recv_len=0;
           static $tk_total_len=0;
@@ -48,7 +48,7 @@ class handle_data
           // echo "len= $len \n";
           // echo "type= $type \n ";
           // echo "imei= $imei \n ";
-           echo "cmd= $cmd \n ";
+          // echo "cmd= $cmd \n ";
           // echo "msg_msg= $msg_array[2] \n";
           //有效数据
           if($type == 'CS'){
@@ -62,21 +62,20 @@ class handle_data
                   $rs_len=sprintf("%04x",strlen($rs));
                   Gateway::sendToUid($imei,$rs_len.$rs);
                   return;
-
                 //位置上报
                 case 'UD':
                   Gateway::sendToUid($imei,"ud");
                   return;
                 //语音
-                case 'TK':
+                case 'TK': // lencs*imei*tk,amr数据
                 $tk_flag=true;
                 $tk_recv_len +=strlen($message);
                 $tk_total_len=hexdec(substr($message,0,4));
-                $filename=$msg_msg[1];
-                $id=$msg_msg[2];
-                $total=$msg_msg[3];
+                $filename=rand(1,100).'.amr';
+                //$id=$msg_msg[2];
+                //$total=$msg_msg[3];
                 //$amr=$msg_msg[4];
-                $head_len=6+strlen($filename)+strlen($id)+strlen($total)+4+15;
+                $head_len=22;
                 $amr=substr($msg_body,$head_len,strlen($msg_body)-$head_len);
                 file_put_contents($filename,$amr,FILE_APPEND);
                 chmod($filename,0777);
@@ -161,7 +160,12 @@ class handle_data
    {
         switch ($message['type']) {
               case 'send':
-                Gateway::sendToAll($message['content']);
+                if($message['content'] == 'tk'){
+                    $data=file_get_contents('test.amr');
+                    Gateway::sendToAll($data);
+                }else{
+                  Gateway::sendToAll($message['content']);
+                }
                 break;
               default:
                 # code...
