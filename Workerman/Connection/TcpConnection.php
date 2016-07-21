@@ -127,14 +127,14 @@ class TcpConnection extends ConnectionInterface
      *
      * @var int
      */
-    public $maxSendBufferSize = 1048576;
+    public $maxSendBufferSize = 4194304;
 
     /**
      * Default send buffer size.
      *
      * @var int
      */
-    public static $defaultMaxSendBufferSize = 1048576;
+    public static $defaultMaxSendBufferSize = 4194304;
 
     /**
      * Maximum acceptable packet size.
@@ -465,7 +465,7 @@ class TcpConnection extends ConnectionInterface
         if ($len === strlen($this->_sendBuffer)) {
             Worker::$globalEvent->del($this->_socket, EventInterface::EV_WRITE);
             $this->_sendBuffer = '';
-            // Try to emit onBufferDrain callback when the send buffer becomes empty. 
+            // Try to emit onBufferDrain callback when the send buffer becomes empty.
             if ($this->onBufferDrain) {
                 try {
                     call_user_func($this->onBufferDrain, $this);
