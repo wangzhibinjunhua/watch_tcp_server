@@ -130,7 +130,9 @@ class handle_data
 
                 //位置上报
                 case 'UD':
-                  Gateway::sendToUid($imei,"ud");
+                  $rs_ud='CS*'.$imei.'*UD';
+                  $rs_ud_len=sprintf("%04x",strlen($rs_ud));
+                  Gateway::sendToUid($imei,$rs_ud_len.$rs_ud);
                   return;
                 //语音
                 case 'TK':
