@@ -98,6 +98,10 @@ class handle_data
                   $rs_st='CS*'.$imei.'*SYSTEMTIME,'.time().'000';
                   $rs_len_st=sprintf("%04x",strlen($rs_st));
                   Gateway::sendToUid($imei,$rs_len_st.$rs_st);
+                case 'WEATHER':
+                  $rs_wea='CS*'.$imei.'*WEATHER,1';
+                  $rs_len_wea=sprintf("%04x",strlen($rs_st));
+                  Gateway::sendToUid($imei,$rs_len_wea.$rs_wea);
 
                 default:
                 return;
