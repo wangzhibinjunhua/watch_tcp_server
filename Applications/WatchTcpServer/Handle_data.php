@@ -93,6 +93,14 @@ class handle_data
                   return;
                 }
                 return;
+
+                case 'SYSTEMTIME':
+                  $rs_st='CS*'.$imei.'*SYSTEMTIME,'.time().'000';
+                  $rs_len_st=sprintf("%04x",strlen($rs_st));
+                  Gateway::sendToUid($imei,$rs_len_st.$rs_st);
+
+                default:
+                return;
               }
           }
         }
