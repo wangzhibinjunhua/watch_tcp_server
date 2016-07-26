@@ -40,7 +40,9 @@ class handle_data
           // }
 
           $msg_array=explode('*', $msg_body);
-          if(count($msg_array))<3 return;
+          if(count($msg_array)<3){
+              return;
+          }
           $type=$msg_array[0];
           $imei=$msg_array[1];
 
@@ -73,7 +75,7 @@ class handle_data
                 $tk_flag=true;
                 $tk_recv_len +=strlen($message);
                 $tk_total_len=hexdec(substr($message,0,4));
-                $filename=rand(1,100).'.amr';
+                $filename=__DIR__.'/amr/'.rand(1,100).'.amr';
                 //$id=$msg_msg[2];
                 //$total=$msg_msg[3];
                 //$amr=$msg_msg[4];
