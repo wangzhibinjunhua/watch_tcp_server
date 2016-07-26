@@ -40,6 +40,7 @@ class handle_data
           // }
 
           $msg_array=explode('*', $msg_body);
+          if(count($msg_array))<3 return;
           $type=$msg_array[0];
           $imei=$msg_array[1];
 
@@ -165,7 +166,7 @@ class handle_data
               case 'send':
                 if($message['content'] == 'tk'){
                     $file=file_get_contents('test.amr');
-                    $rs='CS*358688000000158*TK,'.$file;
+                    $rs='CS*201508220452222*TK,'.$file;
                     $rs_len=sprintf("%04x",strlen($rs));
                     Gateway::sendToAll($rs_len.$rs);
                 }else{
