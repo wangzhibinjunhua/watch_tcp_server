@@ -83,8 +83,16 @@ class handle_data
                 $amr=substr($msg_body,$head_len,strlen($msg_body)-$head_len);
                 file_put_contents($filename,$amr,FILE_APPEND);
                 chmod($filename,0777);
-
+                if($tk_total_len==($tk_recv_len-4)){
+                  $tk_flag=false;
+                  $tk_recv_len=0;
+                  $tk_total_len=0;
+                  $rs_tk='CS*'.$imei.'*TK,1';
+                  $rs_tk_len=sprintf("%04x",strlen($rs_tk));
+                  Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
                   return;
+                }
+                return;
               }
           }
         }
