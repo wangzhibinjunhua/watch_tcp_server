@@ -170,7 +170,7 @@ class handle_data
                 $rs_tk='CS*'.$imei.'*TK,1';
                 $rs_tk_len=sprintf("%04x",strlen($rs_tk));
                 Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
-                  return;
+                return;
               }
           }
    }
