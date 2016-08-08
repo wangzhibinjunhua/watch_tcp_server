@@ -2,7 +2,14 @@
 use \GatewayWorker\Lib\Gateway;
 class handle_data
 {
-	  /**
+
+    public static function pack_data($data)
+    {
+        $data_len=sprintf("%04x",strlen($data));
+        return $data_len.$data;
+    }
+
+    /**
     * [handle_watch_data description]
     * @Author   wzb<wangzhibin_x@qq.com>
     * @DateTime 2016-07-11T20:05:24+0800
@@ -34,14 +41,14 @@ class handle_data
                     //链路保持
                     case 'LK':
                       $rs_lk='CS*'.$imei.'*LK';
-                      $rs_lk_len=sprintf("%04x",strlen($rs));
-                      Gateway::sendToUid($imei,$rs_lk_len.$rs_lk);
+                      //$rs_lk_len=sprintf("%04x",strlen($rs));
+                      Gateway::sendToUid($imei,pack_data($rs_lk));
                       return;
                     //位置上报
                     case 'UD':
                       $rs_ud='CS*'.$imei.'*UD';
-                      $rs_ud_len=sprintf("%04x",strlen($rs_ud));
-                      Gateway::sendToUid($imei,$rs_ud_len.$rs_ud);
+                      //$rs_ud_len=sprintf("%04x",strlen($rs_ud));
+                      Gateway::sendToUid($imei,pack_data($rs_ud));
                       return;
                     //语音
                     case 'TK': // lencs*imei*tk,amr数据
@@ -50,18 +57,18 @@ class handle_data
                       $amr=substr($message,$head_len,strlen($message)-$head_len);
                       file_put_contents($filename,$amr,FILE_APPEND);
                       $rs_tk='CS*'.$imei.'*TK,1';
-                      $rs_tk_len=sprintf("%04x",strlen($rs_tk));
-                      Gateway::sendToUid($imei,$rs_tk_len.$rs_tk);
+                      //$rs_tk_len=sprintf("%04x",strlen($rs_tk));
+                      Gateway::sendToUid($imei,pack_data($rs_tk));
                       return;
 
                     case 'SYSTEMTIME':
                       $rs_st='CS*'.$imei.'*SYSTEMTIME,'.time().'000';
-                      $rs_st_len=sprintf("%04x",strlen($rs_st));
-                      Gateway::sendToUid($imei,$rs_st_len.$rs_st);
+                      //$rs_st_len=sprintf("%04x",strlen($rs_st));
+                      Gateway::sendToUid($imei,pack_data($rs_st));
                     case 'WEATHER':
                       $rs_wea='CS*'.$imei.'*WEATHER,1';
-                      $rs_wea_len=sprintf("%04x",strlen($rs_wea));
-                      Gateway::sendToUid($imei,$rs_wea_len.$rs_wea);
+                      //$rs_wea_len=sprintf("%04x",strlen($rs_wea));
+                      Gateway::sendToUid($imei,pack_data($rs_wea));
 
                     default:
                     return;
@@ -84,8 +91,8 @@ class handle_data
                 if($message_data['content'] == 'tk'){
                     $file=file_get_contents('test.amr');
                     $rs='CS*201508220452222*TK,'.$file;
-                    $rs_len=sprintf("%04x",strlen($rs));
-                    Gateway::sendToAll($rs_len.$rs);
+                    //$rs_len=sprintf("%04x",strlen($rs));
+                    Gateway::sendToAll(pack_data($rs));
                 }else{
                   Gateway::sendToAll($message_data['content']);
                 }
