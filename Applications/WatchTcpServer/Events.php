@@ -48,16 +48,15 @@ class Events
     */
 
    public static function onMessage($client_id, $message) {
-        $showtime=date("Y-m-d H:i:s");
-        echo $message." ".$showtime."---\n";
-        $message_data=json_decode($message,true);
-        $handle=new Handle_data();
-        if(!$message_data){
-            //$handle->handle_watch_data($client_id,$message);
-            $handle->handle_watch_data_test($client_id,$message);
-        }else{
+        //$showtime=date("Y-m-d H:i:s");
+        //echo $message." ".$showtime."---\n";
 
-            $handle->handle_server_data($client_id,$message_data);
+        $handle=new Handle_data();
+        if($_SERVER['GATEWAY_PORT'] == 8282){
+            $handle->handle_watch_data($client_id,$message);
+        }else if($_SERVER['GATEWAY_PORT'] == 9292){
+
+            $handle->handle_server_data($client_id,$message);
         }
 
    }
