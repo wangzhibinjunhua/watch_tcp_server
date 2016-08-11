@@ -48,8 +48,8 @@ class Events
     */
 
    public static function onMessage($client_id, $message) {
-        //$showtime=date("Y-m-d H:i:s");
-        //echo $message." ".$showtime."---\n";
+        $showtime=date("Y-m-d H:i:s");
+        echo $message." ".$showtime."---\n";
 
         $handle=new Handle_data();
         if($_SERVER['GATEWAY_PORT'] == 8282){

@@ -42,13 +42,13 @@ class handle_data
                     case 'LK':
                       $rs_lk='CS*'.$imei.'*LK';
                       //$rs_lk_len=sprintf("%04x",strlen($rs));
-                      Gateway::sendToUid($imei,pack_data($rs_lk));
+                      Gateway::sendToUid($imei,self::pack_data($rs_lk));
                       return;
                     //位置上报
                     case 'UD':
                       $rs_ud='CS*'.$imei.'*UD';
                       //$rs_ud_len=sprintf("%04x",strlen($rs_ud));
-                      Gateway::sendToUid($imei,pack_data($rs_ud));
+                      Gateway::sendToUid($imei,self::pack_data($rs_ud));
                       return;
                     //语音
                     case 'TK': // lencs*imei*tk,amr数据
@@ -58,17 +58,17 @@ class handle_data
                       file_put_contents($filename,$amr,FILE_APPEND);
                       $rs_tk='CS*'.$imei.'*TK,1';
                       //$rs_tk_len=sprintf("%04x",strlen($rs_tk));
-                      Gateway::sendToUid($imei,pack_data($rs_tk));
+                      Gateway::sendToUid($imei,self::pack_data($rs_tk));
                       return;
 
                     case 'SYSTEMTIME':
                       $rs_st='CS*'.$imei.'*SYSTEMTIME,'.time().'000';
                       //$rs_st_len=sprintf("%04x",strlen($rs_st));
-                      Gateway::sendToUid($imei,pack_data($rs_st));
+                      Gateway::sendToUid($imei,self::pack_data($rs_st));
                     case 'WEATHER':
                       $rs_wea='CS*'.$imei.'*WEATHER,1';
                       //$rs_wea_len=sprintf("%04x",strlen($rs_wea));
-                      Gateway::sendToUid($imei,pack_data($rs_wea));
+                      Gateway::sendToUid($imei,self::pack_data($rs_wea));
 
                     default:
                     return;
@@ -92,7 +92,7 @@ class handle_data
                     $file=file_get_contents('test.amr');
                     $rs='CS*201508220452222*TK,'.$file;
                     //$rs_len=sprintf("%04x",strlen($rs));
-                    Gateway::sendToAll(pack_data($rs));
+                    Gateway::sendToUid($imei,self::pack_data($rs));
                 }else{
                   Gateway::sendToAll($message_data['content']);
                 }
