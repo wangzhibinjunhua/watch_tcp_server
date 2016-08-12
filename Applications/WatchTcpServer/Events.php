@@ -20,6 +20,7 @@
 //declare(ticks=1);
 
 use \GatewayWorker\Lib\Gateway;
+use \Workerman\Lib\Timer;
 /**
  * 主逻辑
  * 主要是处理 onConnect onMessage onClose 三个方法
@@ -48,8 +49,14 @@ class Events
     */
 
    public static function onMessage($client_id, $message) {
+
         $showtime=date("Y-m-d H:i:s");
         echo $message." ".$showtime."---\n";
+        //test timer
+        // $time_interval=1.5;
+        // Timer::add($time_interval,function(){
+        //     echo "task run".date("Y-m-d H:i:s")."\n";
+        // });
 
         $handle=new Handle_data();
         if($_SERVER['GATEWAY_PORT'] == 8282){
