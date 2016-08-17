@@ -1,6 +1,6 @@
 <?php
 use \GatewayWorker\Lib\Gateway;
-class handle_data
+class Handle_data
 {
 
     public static function pack_data($data)
