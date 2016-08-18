@@ -1,6 +1,7 @@
 <?php
 use \GatewayWorker\Lib\Gateway;
-class Handle_data
+use Events\Lbs\EventsLbsCommon;
+class HandleData
 {
 
     public static function pack_data($data)
@@ -48,6 +49,8 @@ class Handle_data
                     case 'UD':
                       $rs_ud='CS*'.$imei.'*UD';
                       //$rs_ud_len=sprintf("%04x",strlen($rs_ud));
+                      $ud_parse=new EventsLbsCommon();
+                      $ud_parse->parse($message);
                       Gateway::sendToUid($imei,self::pack_data($rs_ud));
                       return;
                     //语音
