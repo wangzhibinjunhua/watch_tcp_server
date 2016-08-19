@@ -40,8 +40,8 @@ class EventsLbsCommon {
 			$id=24+($i-1)*3;
 			$bts_others .=$mcc.','.$mnc.','.$data_arr[$id].','.$data_arr[$id+1].','.$data_arr[$id+2].'|';
 		}
-		$bts_all=$mcc.','.$mnc.','.$lac.','.$cellid.','.$signle.'|'.$bts_others;
-		
+		$bts_main=$mcc.','.$mnc.','.$lac.','.$cellid.','.$signle;
+
 		$wifi_num=$data_arr[24+($state_num-1)*3];
 		$wifi_info='';
 		for($j=1;$j<=$wifi_num;$j++){
@@ -72,7 +72,7 @@ class EventsLbsCommon {
 			
 		}else if ($gps_status == 'V') {
 			// 基站wifi定位
-			$result=self::get_lbs($bts_all, $wifi_info);
+			$result=self::get_lbs($bts_main,$bts_others, $wifi_info);
 			echo $result;
 		}
 	}
@@ -83,11 +83,11 @@ class EventsLbsCommon {
 	* @date Aug 19, 2016 6:30:54 PM
 	* 调用高德api 使用基站wifi定位
 	*/
-	public static function get_lbs($bts_info,$wifi_info)
+	public static function get_lbs($bts,$nearbts,$wifi_info)
 	{
 		$curl=new CUrl();
 		$api='http://lib.huayinghealth.com/lib-x/?service=lbs.data&';
-		$url=$api.'bts='.$bts_info.'&macs='.$wifi_info;
+		$url=$api.'bts='.$bts.'&nearbts='.$nearbts.'&macs='.$wifi_info;
 		echo $url.PHP_EOL;
 		return $curl->get($url);
 	}
