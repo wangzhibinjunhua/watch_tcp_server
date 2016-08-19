@@ -49,8 +49,6 @@ class EventsLbsCommon {
 			$wifi_info.=$data_arr[$wifi_index].','.$data_arr[$wifi_index+1].','.$data_arr[$wifi_index+2].'|';
 		}
 		
-		echo $bts_all.PHP_EOL;
-		echo $wifi_info.PHP_EOL;
 		$gps_lat='';
 		$gps_lon='';
 		$location_lat='';
