@@ -16,7 +16,10 @@ class EventsLbsCommon
 	 */
 	public static function parse($data)
 	{
-		echo $data.__FILE__;
+		$data_arr=explode(',', $data);
+		$imei=substr($data_arr[0],3,15 );
+		echo $imei.__FILE__;
 	}
+	
 
 }
