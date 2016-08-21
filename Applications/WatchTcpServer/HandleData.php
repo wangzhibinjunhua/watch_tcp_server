@@ -49,9 +49,9 @@ class HandleData
                     case 'UD':
                       $rs_ud='CS*'.$imei.'*UD';
                       //$rs_ud_len=sprintf("%04x",strlen($rs_ud));
+                      Gateway::sendToUid($imei,self::pack_data($rs_ud));
                       $ud_parse=new EventsLbsCommon();
                       $ud_parse->parse($message);
-                      Gateway::sendToUid($imei,self::pack_data($rs_ud));
                       return;
                     //语音
                     case 'TK': // lencs*imei*tk,amr数据
