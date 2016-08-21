@@ -103,18 +103,18 @@ class EventsLbsCommon {
 					$location_content=$rs['data']['result']['desc'];
 				}
 			}
-			echo $result;
+			//echo $result.PHP_EOL;
 		}
 		
 		//insert to sql
 		$db_watch=Db::instance('db_watch');
 		$sys_time=date("Y-m-d H:i:s");
-		$sql=" insert into 'watch_info' ('imei','gps_lon','gps_lat','watch_time',
-				'system_time','location_lon','location_lat','location_content',
-				'location_type','ud_content','battery') values ('$imei','$gps_lon',
+		$sql="insert into watch_info (imei,gps_lon,gps_lat,watch_time,
+				system_time,location_lon,location_lat,location_content,
+				location_type,ud_content,battery) values ('$imei','$gps_lon',
 				'$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat',
-				'$location_content','$location_type','$ud_content','$battery','$battery')";
-		echo $sql;
+				'$location_content','$location_type','$ud_content','$battery')";
+		//echo $sql;
 		$db_watch->query($sql);
 		
 	}
@@ -130,7 +130,7 @@ class EventsLbsCommon {
 		$curl=new CUrl();
 		$api='http://lib.huayinghealth.com/lib-x/?service=lbs.data&';
 		$url=$api.'bts='.$bts.'&nearbts='.$nearbts.'&macs='.$wifi_info;
-		echo $url.PHP_EOL;
+		//echo $url.PHP_EOL;
 		return $curl->get($url);
 	}
 	
