@@ -55,7 +55,7 @@ class EventsLbsCommon {
 		$wifi_info='';
 		for($j=1;$j<=$wifi_num;$j++){
 			$wifi_index=25+($state_num-1)*3+($j-1)*3;
-			$wifi_info.=$data_arr[$wifi_index].','.$data_arr[$wifi_index+1].','.$data_arr[$wifi_index+2].'|';
+			$wifi_info.=$data_arr[$wifi_index+1].','.$data_arr[$wifi_index+2].','.$data_arr[$wifi_index].'|';
 		}
 		
 		$gps_lat='';
