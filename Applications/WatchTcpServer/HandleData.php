@@ -1,6 +1,7 @@
 <?php
 use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
+use Events\WeatherService\WeatherService;
 class HandleData
 {
 
@@ -69,10 +70,13 @@ class HandleData
                       //$rs_st_len=sprintf("%04x",strlen($rs_st));
                       Gateway::sendToUid($imei,self::pack_data($rs_st));
                     case 'WEATHER':
-                      $rs_wea='CS*'.$imei.'*WEATHER,1';
+                      $rs_wea='CS*'.$imei.'*WEATHER,';
                       //$rs_wea_len=sprintf("%04x",strlen($rs_wea));
-                      Gateway::sendToUid($imei,self::pack_data($rs_wea));
-
+                      Gateway::sendToUid($imei,self::pack_data($rs_wea.'1'));
+					  $weather_service=new WeatherService();
+					  $rs_weather=$weather_service->parse($message);
+					  Gateway::sendToUid($imei,self::pack_data($rs_wea.$rs_weather));
+					  return;
                     default:
                     return;
                   }
