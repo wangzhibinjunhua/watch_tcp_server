@@ -4,7 +4,7 @@
 * @date Aug 21, 2016 3:08:42 PM
 * 从网络获取天气数据
 */
-namespace Events\Lbs;
+namespace Events\WeatherService;
 use \GatewayWorker\Wtools\CUrl;
 
 
@@ -35,12 +35,12 @@ class WeatherService
 			return self::get_weather_by_cityname($cityname);
 		}
 	}
-	
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Aug 22, 2016 2:25:50 PM
 	* 根据经纬度坐标获取地理位置信息,城市名称
-	* $location : 经纬度坐标 
+	* $location : 经纬度坐标
 	* return: 城市名
 	*/
 	public static function get_cityname_by_gps($location)
@@ -55,7 +55,7 @@ class WeatherService
 		}
 		return $rs_arr['data']['regeocode']['addressComponent']['city'];
 	}
-	
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Aug 22, 2016 2:27:18 PM
@@ -78,7 +78,7 @@ class WeatherService
 			$bts_others .=$mcc.','.$mnc.','.$data_arr[$id].','.$data_arr[$id+1].','.$data_arr[$id+2].'|';
 		}
 		$bts_main=$mcc.','.$mnc.','.$lac.','.$cellid.','.$signle;
-		
+
 		$wifi_num=$data_arr[10+($state_num-1)*3];
 		$wifi_info='';
 		for($j=1;$j<=$wifi_num;$j++){
@@ -95,9 +95,9 @@ class WeatherService
 			return null;
 		}
 		return $rs_arr['data']['result']['city'];
-		
+
 	}
-	
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Aug 22, 2016 2:32:11 PM
@@ -125,20 +125,20 @@ class WeatherService
 		$temperature=$rs_arr['data']['result']['data']['realtime']['weather']['temperature'];
 		$wea_info=$rs_arr['data']['result']['data']['realtime']['weather']['info'];
 		$wea_id='0';
-		if(strops($wea_info,'云') !== false){
+		if(strpos($wea_info,'云') !== false){
 			$wea_id='1';
-		}else if(strops($wea_info,'晴') !== false){
+		}else if(strpos($wea_info,'晴') !== false){
 			$wea_id='0';
-		}else if(strops($wea_info,'暴雨') !== false){
+		}else if(strpos($wea_info,'暴雨') !== false){
 			$wea_id='4';
-		}else if(strops($wea_info,'雨') !== false){
+		}else if(strpos($wea_info,'雨') !== false){
 			$wea_id='3';
-		}else if(strops($wea_info,'雪') !== false){
+		}else if(strpos($wea_info,'雪') !== false){
 			$wea_id='5';
 		}
 		return $temperature.','.$wea_id;
-		
+
 	}
-	
-	
+
+
 }
