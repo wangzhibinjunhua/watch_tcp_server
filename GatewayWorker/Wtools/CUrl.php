@@ -3,9 +3,9 @@
  * PhalApi_CUrl CURL请求类
  *
  * 通过curl实现的快捷方便的接口请求类
- * 
+ *
  * <br>示例：<br>
- * 
+ *
 ```
  *  // 失败时再重试2次
  *  $curl = new PhalApi_CUrl(2);
@@ -23,7 +23,7 @@
  * @link        http://www.phalapi.net/
  * @author      dogstar <chanzonghuang@gmail.com> 2015-01-02
  */
-namespace Wtools;
+namespace GatewayWorker\Wtools;
 class CUrl {
 
     /**
@@ -40,7 +40,7 @@ class CUrl {
 	 * @param int $retryTimes 超时重试次数，默认为1
 	 */
     public function __construct($retryTimes = 1) {
-        $this->retryTimes = $retryTimes < self::MAX_RETRY_TIMES 
+        $this->retryTimes = $retryTimes < self::MAX_RETRY_TIMES
             ? $retryTimes : self::MAX_RETRY_TIMES;
     }
 
@@ -52,7 +52,7 @@ class CUrl {
 	 */
     public function get($url, $timeoutMs = 3000) {
         return $this->request($url, FALSE, $timeoutMs);
-    } 
+    }
 
     /**
      * POST方式的请求

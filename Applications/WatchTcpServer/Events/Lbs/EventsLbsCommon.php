@@ -5,7 +5,7 @@
  *
  */
 namespace Events\Lbs;
-use Wtools\CUrl;
+use \GatewayWorker\Wtools\CUrl;
 use \GatewayWorker\Lib\Db;
 
 //test
@@ -18,8 +18,8 @@ use \GatewayWorker\Lib\Db;
 // var_dump('222'.$rs['data']['result']['type']);
 
 class EventsLbsCommon {
-	
-	
+
+
 	/**
 	 * [解析定位数据]
 	 *
@@ -37,7 +37,7 @@ class EventsLbsCommon {
 		$watch_time = substr ( $date, 4, 2 ) . '-' . substr ( $date, 2, 2 ) . '-' . substr ( $date, 0, 2 ) . ' ' . substr ( $time, 0, 2 ) . ':' . substr ( $time, 2, 2 ) . ':' . substr ( $time, 4, 2 );
 		$battery = $data_arr [13];
 		$watch_status = $data_arr [16];
-		
+
 		$state_num = $data_arr [17];
 		$mcc = $data_arr [19];
 		$mnc=$data_arr[20];
@@ -57,14 +57,14 @@ class EventsLbsCommon {
 			$wifi_index=25+($state_num-1)*3+($j-1)*3;
 			$wifi_info.=$data_arr[$wifi_index+1].','.$data_arr[$wifi_index+2].','.$data_arr[$wifi_index].'|';
 		}
-		
+
 		$gps_lat='';
 		$gps_lon='';
 		$location_lat='';
 		$location_lon='';
 		$location_type='';
 		$location_content='';
-		
+
 		$gps_status = $data_arr [3];
 		if ($gps_status == 'A') {
 			// gps定位
@@ -73,14 +73,14 @@ class EventsLbsCommon {
 			}else{
 				$location_lat=$gps_lat=$data_arr[4];
 			}
-			
+
 			if($data_arr[7] == 'E'){
 				$location_lon=$gps_lon=0-$data_arr[6];
 			}else{
 				$location_lon=$gps_lon=$data_arr[6];
 			}
 			$location_type=0;
-			
+
 		}else if ($gps_status == 'V') {
 			// 基站wifi定位
 			$result=self::get_lbs($bts_main,$bts_others, $wifi_info);
@@ -105,7 +105,7 @@ class EventsLbsCommon {
 			}
 			//echo $result.PHP_EOL;
 		}
-		
+
 		//insert to sql
 		$db_watch=Db::instance('db_watch');
 		$sys_time=date("Y-m-d H:i:s");
@@ -116,10 +116,10 @@ class EventsLbsCommon {
 				'$location_content','$location_type','$ud_content','$battery')";
 		//echo $sql;
 		$db_watch->query($sql);
-		
+
 	}
-	
-	
+
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Aug 19, 2016 6:30:54 PM
@@ -133,8 +133,8 @@ class EventsLbsCommon {
 		//echo $url.PHP_EOL;
 		return $curl->get($url);
 	}
-	
-	
+
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Aug 21, 2016 11:43:29 AM
@@ -142,7 +142,7 @@ class EventsLbsCommon {
 	*/
 	public static function save_db()
 	{
-		
-		
+
+
 	}
 }
