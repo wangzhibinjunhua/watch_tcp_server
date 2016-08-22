@@ -23,7 +23,7 @@
  * @link        http://www.phalapi.net/
  * @author      dogstar <chanzonghuang@gmail.com> 2015-01-02
  */
-namespace Events;
+namespace Wtools;
 class CUrl {
 
     /**

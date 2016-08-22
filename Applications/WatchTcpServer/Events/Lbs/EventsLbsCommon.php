@@ -5,7 +5,7 @@
  *
  */
 namespace Events\Lbs;
-use Events\CUrl;
+use Wtools\CUrl;
 use \GatewayWorker\Lib\Db;
 
 //test
