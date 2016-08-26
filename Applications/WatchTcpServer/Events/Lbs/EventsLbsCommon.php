@@ -16,6 +16,7 @@ use \GatewayWorker\Lib\Db;
 // $rs=json_decode($json,true);
 // var_dump($rs);
 // var_dump('222'.$rs['data']['result']['type']);
+$redis=new \Redis();
 
 class EventsLbsCommon {
 

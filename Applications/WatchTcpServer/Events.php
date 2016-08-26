@@ -19,8 +19,8 @@
  */
 //declare(ticks=1);
 
-use \GatewayWorker\Lib\Gateway;
-use \Workerman\Lib\Timer;
+//use \GatewayWorker\Lib\Gateway;
+//use \Workerman\Lib\Timer;
 /**
  * 主逻辑
  * 主要是处理 onConnect onMessage onClose 三个方法
