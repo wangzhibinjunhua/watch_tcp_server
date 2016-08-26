@@ -107,6 +107,9 @@ class GatewayProtocol
     // 包体是标量
     const FLAG_BODY_IS_SCALAR = 0x01;
 
+    // 通知gateway在send时不调用协议encode方法，在广播组播时提升性能
+    const FLAG_NOT_CALL_ENCODE = 0x02;
+
     /**
      * 包头长度
      *
@@ -155,13 +158,14 @@ class GatewayProtocol
         if (!$flag) {
             $data['body'] = serialize($data['body']);
         }
-        $ext_len     = strlen($data['ext_data']);
-        $package_len = self::HEAD_LEN + $ext_len + strlen($data['body']);
+        $data['flag'] |= $flag;
+        $ext_len      = strlen($data['ext_data']);
+        $package_len  = self::HEAD_LEN + $ext_len + strlen($data['body']);
         return pack("NCNnNnNCnN", $package_len,
             $data['cmd'], $data['local_ip'],
             $data['local_port'], $data['client_ip'],
             $data['client_port'], $data['connection_id'],
-            $flag, $data['gateway_port'],
+            $data['flag'], $data['gateway_port'],
             $ext_len) . $data['ext_data'] . $data['body'];
     }
 
