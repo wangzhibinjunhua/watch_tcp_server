@@ -30,11 +30,18 @@ class AsyncTcpConnection extends TcpConnection
     public $onConnect = null;
 
     /**
+     * Transport layer protocol.
+     *
+     * @var string
+     */
+    public $transport = 'tcp';
+
+    /**
      * Status.
      *
      * @var int
      */
-    protected $_status = self::STATUS_CONNECTING;
+    protected $_status = self::STATUS_INITIAL;
 
     /**
      * Remote host.
@@ -44,6 +51,28 @@ class AsyncTcpConnection extends TcpConnection
     protected $_remoteHost = '';
 
     /**
+     * Connect start time.
+     *
+     * @var string
+     */
+    protected $_connectStartTime = 0;
+
+    /**
+     * PHP built-in protocols.
+     *
+     * @var array
+     */
+    protected static $_builtinTransports = array(
+        'tcp'   => 'tcp',
+        'udp'   => 'udp',
+        'unix'  => 'unix',
+        'ssl'   => 'ssl',
+        'sslv2' => 'sslv2',
+        'sslv3' => 'sslv3',
+        'tls'   => 'tls'
+    );
+
+    /**
      * Construct.
      *
      * @param string $remote_address
@@ -51,18 +80,22 @@ class AsyncTcpConnection extends TcpConnection
      */
     public function __construct($remote_address)
     {
+        // Get the application layer communication protocol and listening address.
         list($scheme, $address) = explode(':', $remote_address, 2);
-        if ($scheme != 'tcp') {
-            // Get application layer protocol.
+        // Check application layer protocol class.
+        if (!isset(self::$_builtinTransports[$scheme])) {
             $scheme         = ucfirst($scheme);
             $this->protocol = '\\Protocols\\' . $scheme;
             if (!class_exists($this->protocol)) {
-                $this->protocol = '\\Workerman\\Protocols\\' . $scheme;
+                $this->protocol = "\\Workerman\\Protocols\\$scheme";
                 if (!class_exists($this->protocol)) {
                     throw new Exception("class \\Protocols\\$scheme not exist");
                 }
             }
+        } else {
+            $this->transport = self::$_builtinTransports[$scheme];
         }
+        
         $this->_remoteAddress = substr($address, 2);
         $this->_remoteHost    = substr($this->_remoteAddress, 0, strrpos($this->_remoteAddress, ':'));
         $this->id             = self::$_idRecorder++;
@@ -71,15 +104,30 @@ class AsyncTcpConnection extends TcpConnection
         $this->maxSendBufferSize = self::$defaultMaxSendBufferSize;
     }
 
+    /**
+     * Do connect.
+     *
+     * @return void 
+     */
     public function connect()
     {
+         if ($this->_status !== self::STATUS_INITIAL && $this->_status !== self::STATUS_CLOSING && $this->_status !== self::STATUS_CLOSED) {
+            return;
+        }
+        $this->_status = self::STATUS_CONNECTING;
+        $this->_connectStartTime = microtime(true);
         // Open socket connection asynchronously.
-        $this->_socket = stream_socket_client("tcp://{$this->_remoteAddress}", $errno, $errstr, 0,
+        $this->_socket = stream_socket_client("{$this->transport}://{$this->_remoteAddress}", $errno, $errstr, 0,
             STREAM_CLIENT_ASYNC_CONNECT);
         // If failed attempt to emit onError callback.
         if (!$this->_socket) {
-            $this->_status = self::STATUS_CLOSED;
             $this->emitError(WORKERMAN_CONNECT_FAIL, $errstr);
+            if ($this->_status === self::STATUS_CLOSING) {
+                $this->destroy();
+            }
+            if ($this->_status === self::STATUS_CLOSED) {
+                $this->onConnect = null;
+            }
             return;
         }
         // Add socket to global event loop waiting connection is successfully established or faild. 
@@ -105,14 +153,15 @@ class AsyncTcpConnection extends TcpConnection
      */
     protected function emitError($code, $msg)
     {
+        $this->_status = self::STATUS_CLOSING;
         if ($this->onError) {
             try {
                 call_user_func($this->onError, $this, $code, $msg);
             } catch (\Exception $e) {
-                echo $e;
+                Worker::log($e);
                 exit(250);
             } catch (\Error $e) {
-                echo $e;
+                Worker::log($e);
                 exit(250);
             }
         }
@@ -132,8 +181,9 @@ class AsyncTcpConnection extends TcpConnection
             Worker::$globalEvent->del($socket, EventInterface::EV_WRITE);
             // Nonblocking.
             stream_set_blocking($socket, 0);
+            stream_set_read_buffer($socket, 0);
             // Try to open keepalive for tcp and disable Nagle algorithm.
-            if (function_exists('socket_import_stream')) {
+            if (function_exists('socket_import_stream') && $this->transport === 'tcp') {
                 $raw_socket = socket_import_stream($socket);
                 socket_set_option($raw_socket, SOL_SOCKET, SO_KEEPALIVE, 1);
                 socket_set_option($raw_socket, SOL_TCP, TCP_NODELAY, 1);
@@ -151,18 +201,22 @@ class AsyncTcpConnection extends TcpConnection
                 try {
                     call_user_func($this->onConnect, $this);
                 } catch (\Exception $e) {
-                    echo $e;
+                    Worker::log($e);
                     exit(250);
                 } catch (\Error $e) {
-                    echo $e;
+                    Worker::log($e);
                     exit(250);
                 }
             }
         } else {
             // Connection failed.
-            $this->emitError(WORKERMAN_CONNECT_FAIL, 'connect fail');
-            $this->destroy();
-            $this->onConnect = null;
+            $this->emitError(WORKERMAN_CONNECT_FAIL, 'connect ' . $this->_remoteAddress . ' fail after ' . round(microtime(true) - $this->_connectStartTime, 4) . ' seconds');
+            if ($this->_status === self::STATUS_CLOSING) {
+                $this->destroy();
+            }
+            if ($this->_status === self::STATUS_CLOSED) {
+                $this->onConnect = null;
+            }
         }
     }
 }
