@@ -108,16 +108,18 @@ class EventsLbsCommon {
 		}
 
 		//insert to sql
-		$db_watch=Db::instance('db_watch');
-		$sys_time=date("Y-m-d H:i:s");
-		$sql="insert into watch_info (imei,gps_lon,gps_lat,watch_time,
-				system_time,location_lon,location_lat,location_content,
-				location_type,ud_content,battery) values ('$imei','$gps_lon',
-				'$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat',
-				'$location_content','$location_type','$ud_content','$battery')";
-		//echo $sql;
-		$db_watch->query($sql);
-
+// 		$db_watch=Db::instance('db_watch');
+// 		$sys_time=date("Y-m-d H:i:s");
+// 		$sql="insert into watch_info (imei,gps_lon,gps_lat,watch_time,
+// 				system_time,location_lon,location_lat,location_content,
+// 				location_type,ud_content,battery) values ('$imei','$gps_lon',
+// 				'$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat',
+// 				'$location_content','$location_type','$ud_content','$battery')";
+// 		//echo $sql;
+// 		$db_watch->query($sql);
+		$msg='$imei'.','.'$gps_lon'.','.'$gps_lat'.','.'$watch_time'.','.'$sys_time'.','.'$location_lon'.','.'$location_lat'.
+				','.'$location_content'.','.'$location_type'.','.'$ud_content'.','.'$battery';
+		self::save_db($msg);
 	}
 
 
@@ -141,9 +143,13 @@ class EventsLbsCommon {
 	* @date Aug 21, 2016 11:43:29 AM
 	* 存入数据库
 	*/
-	public static function save_db()
+	public static function save_db($msg)
 	{
-
-
+		$redis_watch=new Redis();
+		$redis_watch->connect('127.0.0.1',6379);
+		$redis_watch->auth("huayingtek2016");
+		
+		$redis_watch->rPush("watch_info",$msg.'%');
+		$redis_watch->close();
 	}
 }
