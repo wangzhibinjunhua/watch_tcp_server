@@ -12,7 +12,8 @@ $redis->auth("huayingtek2016");
 //获取现有消息队列的长度
 $count = 0;
 $max = $redis->lLen("watch_info");
-echo $max.PHP_EOL;
+$showtime=date("Y-m-d H:i:s");
+echo $max.'----'.$showtime.PHP_EOL;
 //获取消息队列的内容
 $insert_sql='insert into watch_info (imei,gps_lon,gps_lat,watch_time,system_time,location_lon,location_lat,location_content,location_type,ud_content,battery) values ';
 
