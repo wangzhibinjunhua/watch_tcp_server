@@ -145,11 +145,11 @@ class EventsLbsCommon {
 	*/
 	public static function save_db($msg)
 	{
-		$redis_watch=new Redis();
+		$redis_watch=new \Redis();
 		$redis_watch->connect('127.0.0.1',6379);
 		$redis_watch->auth("huayingtek2016");
 		
-		$redis_watch->rPush("watch_info",$msg.'%');
+		$redis_watch->rPush("watch_info",$msg);
 		$redis_watch->close();
 	}
 }

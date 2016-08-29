@@ -1,0 +1,64 @@
+<?php
+/**
+* @author wzb<wangzhibin_x@foxmail.com>
+* @date Aug 29, 2016 5:47:37 PM
+* 获取redis消息队列中的数据,拼接sql 批量入库
+*/
+require_once('/home/work/wzb/project/release/common/db_config.php');
+$redis=new Redis();
+$redis->connect('127.0.0.1',6379);
+$redis->auth("huayingtek2016");
+
+//获取现有消息队列的长度
+$count = 0;
+$max = $redis->lLen("watch_info");
+
+//获取消息队列的内容
+$insert_sql="insert into watch_info (imei,gps_lon,gps_lat,watch_time,
+ 				system_time,location_lon,location_lat,location_content,
+ 				location_type,ud_content,battery) values ";
+
+//回滚数组
+$roll_back_arr=array();
+
+while($count<$max){
+	$msg=$redis->lPop("watch_info");
+	$roll_back_arr=$msg;
+	
+	if($msg == 'nil' || !isset($msg)){
+		$insert_sql .= ";";
+		break;
+	}
+	
+	//$msg_arr=explode('%', $msg);
+	$insert_sql .= " ('$msg'),";
+	$count++;
+}
+
+
+//存在数据,批量入库
+if($count != 0){
+	$db=connect_database('watch');
+	if(!$db){
+		die("could not connect mysql");
+	}
+	$insert_sql = rtrim($insert_sql,",").";";
+	$res = mysql_query($insert_sql);
+	
+	//数据库插入失败回滚
+	if(!$res){
+		foreach ($roll_back_arr as $k){
+			$redis->rPush("watch_info",$k);
+		}
+	}
+	
+	mysql_free_result($res);
+	mysql_close($db);
+}
+
+$redis->close();
+
+
+
+
+
