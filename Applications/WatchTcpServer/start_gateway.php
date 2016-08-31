@@ -44,10 +44,10 @@ $gateway->registerAddress = '127.0.0.1:1238';
 //$gateway->pingData = '{"type":"ping"}';
 //
 // 心跳间隔
-//$gateway->pingInterval = 60;
+$gateway->pingInterval = 60;
 //心跳数据
-//$gateway->pingData = '0017CS*201508220452222*PING'.PHP_EOL;
-
+$gateway->pingData = '';
+$gateway->pingNotResponseLimit = 3;
 /*
 // 当客户端连接上来时，设置连接的onWebSocketConnect，即在websocket握手时的回调
 $gateway->onConnect = function($connection)
