@@ -34,7 +34,7 @@ class JsonInt
 		}
 		return $total_len;
 	}
-	
+
 	/**
 	 * Encode.
 	 *
@@ -45,7 +45,7 @@ class JsonInt
 	{
 		return substr($buffer, 4);
 	}
-	
+
 	/**
 	 * Decode.
 	 *
@@ -54,7 +54,8 @@ class JsonInt
 	 */
 	public static function encode($buffer)
 	{
-		$rs_len=sprintf("%04x",strlen($buffer));
-		return $rs_len.$buffer;
+		//$rs_len=sprintf("%04x",strlen($buffer));//业务代码去实现
+		//return $rs_len.$buffer;
+		return $buffer;
 	}
 }

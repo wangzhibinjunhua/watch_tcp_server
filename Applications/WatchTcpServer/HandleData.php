@@ -7,10 +7,10 @@ class HandleData {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
 		return $data_len . $data;
 	}
-	
+
 	/**
 	 * [handle_watch_data description]
-	 * 
+	 *
 	 * @author wzb<wangzhibin_x@qq.com>
 	 *         @DateTime 2016-07-11T20:05:24+0800
 	 *         @ 处理手表终端发送过来的数据
@@ -19,21 +19,21 @@ class HandleData {
 	public static function handle_watch_data($client_id, $message) {
 		static $filename = '1.amr';
 		static $imei;
-		
+
 		// echo $message.' xx'.PHP_EOL;
-		
+
 		$msg_array = explode ( '*', $message );
 		if (count ( $msg_array ) < 3) {
 			return;
 		}
 		$type = $msg_array [0];
 		$imei = $msg_array [1];
-		
+
 		$msg_msg = explode ( ',', $msg_array [2] );
 		$cmd = $msg_msg [0];
-		
+
 		Gateway::bindUid ( $client_id, $imei );
-		
+
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
@@ -59,7 +59,7 @@ class HandleData {
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
 				return;
-			
+
 			case 'SYSTEMTIME' :
 				$rs_st = 'CS*' . $imei . '*SYSTEMTIME,' . time () . '000';
 				// $rs_st_len=sprintf("%04x",strlen($rs_st));
@@ -73,17 +73,19 @@ class HandleData {
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
 				return;
 			case 'TEST':
-				Gateway::sendToUid ( '12345678901', self::pack_data ( 'hahah123' ) );
+				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
+				//echo json_encode($rs_test).PHP_EOL;
+				Gateway::sendToUid ( '12345678901', self::pack_data ( json_encode($rs_test)) );
 				return;
 				break;
 			default :
 				return;
 		}
 	}
-	
+
 	/**
 	 * [handle_server_data description]
-	 * 
+	 *
 	 * @author wzb<wangzhibin_x@qq.com>
 	 *         @DateTime 2016-07-11T20:08:11+0800
 	 *         @处理api接口数据 $message定义为json数据
@@ -92,14 +94,14 @@ class HandleData {
 		$message_data = json_decode ( $message, true );
 		$id=$message_data['id'];
 		Gateway::bindUid ( $client_id, $id );
-		echo $message_data ['cmd'] . PHP_EOL;
+		//echo $message_data ['cmd'] . PHP_EOL;
 		switch ($message_data ['cmd']) {
 			case 'ping':
-				Gateway::sendToUid($id, $message);
+				Gateway::sendToUid($id, self::pack_data($message));
 				return;
 				break;
-			
-			
+
+
 			// 测试代码
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
