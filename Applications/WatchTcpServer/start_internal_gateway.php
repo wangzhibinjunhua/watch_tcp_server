@@ -23,7 +23,7 @@ Autoloader::setRootPath(__DIR__);
 
 // #### 内部推送端口(假设当前服务器内网ip为192.168.100.100) ####
 //$internal_gateway = new Gateway("Text://10.44.125.196:8283");
-$internal_gateway = new Gateway("Text://0.0.0.0:9292");
+$internal_gateway = new Gateway("JsonInt://0.0.0.0:9292");
 $internal_gateway->name='watch_server_internalGateway';
 $internal_gateway->count=8;
 $internal_gateway->startPort = 2800;
