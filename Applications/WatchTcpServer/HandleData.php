@@ -72,6 +72,10 @@ class HandleData {
 				$rs_weather = $weather_service->parse ( $message );
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
 				return;
+			case 'TEST':
+				Gateway::sendToUid ( '12345678901', self::pack_data ( 'hahah123' ) );
+				return;
+				break;
 			default :
 				return;
 		}
@@ -86,12 +90,18 @@ class HandleData {
 	 */
 	public function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
-		Gateway::bindUid ( $client_id, $message_data ['id'] );
+		$id=$message_data['id'];
+		Gateway::bindUid ( $client_id, $id );
 		echo $message_data ['cmd'] . PHP_EOL;
 		switch ($message_data ['cmd']) {
+			case 'ping':
+				Gateway::sendToUid($id, $message);
+				return;
+				break;
+			
 			
 			// 测试代码
-			case 'send' :
+			case 'test' :
 				if ($message_data ['info'] == 'tk') {
 					$file = file_get_contents ( 'test.amr' );
 					$rs = 'CS*201508220452222*TK,' . $file;
