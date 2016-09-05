@@ -51,7 +51,7 @@ class HandleData {
 				return;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
-				$filename = __DIR__ . '/amr/' . rand ( 1, 100 ) . '.amr';
+				$filename = __DIR__ . '/amr/' . $imei.'_'.time() . '.amr';
 				$head_len = 22;
 				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
 				file_put_contents ( $filename, $amr, FILE_APPEND );
@@ -64,6 +64,7 @@ class HandleData {
 				$rs_st = 'CS*' . $imei . '*SYSTEMTIME,' . time () . '000';
 				// $rs_st_len=sprintf("%04x",strlen($rs_st));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_st ) );
+				return;
 			case 'WEATHER' :
 				$rs_wea = 'CS*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
@@ -92,6 +93,9 @@ class HandleData {
 	 */
 	public function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
+		if(!$message_data){
+			return;
+		}
 		$id=$message_data['id'];
 		Gateway::bindUid ( $client_id, $id );
 		//echo $message_data ['cmd'] . PHP_EOL;
