@@ -58,12 +58,13 @@ class Events
         //     echo "task run".date("Y-m-d H:i:s")."\n";
         // });
 
-        $handle=new HandleData();
+        //$handle=new HandleData();
         if($_SERVER['GATEWAY_PORT'] == 8282){
-            $handle->handle_watch_data($client_id,$message);
+            //$handle->handle_watch_data($client_id,$message);
+            HandleData::handle_watch_data($client_id, $message);
         }else if($_SERVER['GATEWAY_PORT'] == 9292){
-
-            $handle->handle_server_data($client_id,$message);
+			HandleData::handle_server_data($client_id, $message);
+            //$handle->handle_server_data($client_id,$message);
         }
 
    }

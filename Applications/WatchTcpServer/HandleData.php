@@ -8,6 +8,29 @@ class HandleData {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
 		return $data_len . $data;
 	}
+	
+	public static function async($user_id,$task_data)
+	{
+		$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
+		$task_connection->send($task_data);
+		$task_connection->onMessage=function($task_connection,$task_result)use($user_id)
+		{
+			Gateway::sendToUid($user_id,$task_result);
+			$task_connection->close();
+		};
+		$task_connection->connect();
+	}
+	
+	
+	/**
+	* @author wzb<wangzhibin_x@foxmail.com>
+	* @date Sep 6, 2016 2:37:37 PM
+	* 处理异步任务数据
+	*/
+	public static function handle_async_data($connection,$message)
+	{
+		$connection->send($message.'hello');
+	}
 
 	/**
 	 * [handle_watch_data description]
@@ -70,20 +93,12 @@ class HandleData {
 				$rs_wea = 'CS*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
-				//test
-				$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
-				$task_data='WEATHER';
-				$task_connection->send($task_data);
-				$task_connection->onMessage=function($task_connection,$task_result)use($imei)
-				{
-					Gateway::sendToUid($imei,$task_result);
-					$task_connection->close();
-				};
-				$task_connection->connect();
 				
-				$weather_service = new WeatherService ();
-				$rs_weather = $weather_service->parse ( $message );
-				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
+// 				$weather_service = new WeatherService ();
+// 				$rs_weather = $weather_service->parse ( $message );
+// 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
+				//采用异步任务处理curl耗时任务
+				self::async($imei, $message);
 				return;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
@@ -103,7 +118,7 @@ class HandleData {
 	 *         @DateTime 2016-07-11T20:08:11+0800
 	 *         @处理api接口数据 $message定义为json数据
 	 */
-	public function handle_server_data($client_id, $message) {
+	public static function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
 		if(!$message_data){
 			return;

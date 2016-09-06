@@ -34,7 +34,9 @@ $gateway->count = 20;
 
 $gateway->onMessage=function($connection, $message)
 {
-	$connection->send($message.'hello');
+	//$connection->send($message.'hello');
+	echo 'async'.$message.PHP_EOL;
+	HandleData::handle_async_data($connection,$message);
 };
 
 // 如果不是在根目录启动，则运行runAll方法
