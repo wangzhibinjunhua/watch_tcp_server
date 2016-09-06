@@ -15,7 +15,7 @@ class HandleData {
 		$task_connection->send($task_data);
 		$task_connection->onMessage=function($task_connection,$task_result)use($user_id)
 		{
-			Gateway::sendToUid($user_id,$task_result);
+			if(!empty($task_result))Gateway::sendToUid($user_id,$task_result);
 			$task_connection->close();
 		};
 		$task_connection->connect();
@@ -29,7 +29,25 @@ class HandleData {
 	*/
 	public static function handle_async_data($connection,$message)
 	{
-		$connection->send($message.'hello');
+		$result='';
+		$msg_array = explode ( '*', $message );
+		$msg_msg = explode ( ',', $msg_array [2] );
+		$cmd = $msg_msg [0];
+		switch($cmd){
+			case 'WEATHER':
+				$weather_service = new WeatherService ();
+				$rs_weather = $weather_service->parse ( $message );
+				$rs_wea = 'CS*' . $imei . '*WEATHER,';
+				$result=self::pack_data($rs_wea . $rs_weather);
+				break;
+			case 'UD':
+				$ud_parse = new EventsLbsCommon ();
+				$ud_parse->parse ( $message );
+				break;
+			default:
+				break;
+		}
+		$connection->send($result);
 	}
 
 	/**
@@ -70,8 +88,10 @@ class HandleData {
 				$rs_ud = 'CS*' . $imei . '*UD';
 				// $rs_ud_len=sprintf("%04x",strlen($rs_ud));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_ud ) );
-				$ud_parse = new EventsLbsCommon ();
-				$ud_parse->parse ( $message );
+				//$ud_parse = new EventsLbsCommon ();
+				//$ud_parse->parse ( $message );
+				//用异步任务处理
+				self::async($imei,$message);
 				return;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
@@ -98,7 +118,7 @@ class HandleData {
 // 				$rs_weather = $weather_service->parse ( $message );
 // 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
 				//采用异步任务处理curl耗时任务
-				self::async($imei, $message);
+				self::async($imei,$message);
 				return;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');

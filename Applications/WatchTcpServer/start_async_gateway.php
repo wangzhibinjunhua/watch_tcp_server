@@ -32,10 +32,10 @@ $gateway->name = 'watch_server_async_gateway';
 // gateway进程数
 $gateway->count = 20;
 
-$gateway->onMessage=function($connection, $message)
+$gateway->onMessage=function($connection,$message)
 {
 	//$connection->send($message.'hello');
-	echo 'async'.$message.PHP_EOL;
+	//echo 'async'.$message.PHP_EOL;
 	HandleData::handle_async_data($connection,$message);
 };
 
