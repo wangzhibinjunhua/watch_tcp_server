@@ -2,6 +2,7 @@
 use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
+use Workerman\Connection\AsyncTcpConnection;
 class HandleData {
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
@@ -69,6 +70,17 @@ class HandleData {
 				$rs_wea = 'CS*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
+				//test
+				$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
+				$task_data='WEATHER';
+				$task_connection->send($task_data);
+				$task_connection->onMessage=function($task_connection,$task_result)use($imei)
+				{
+					Gateway::sendToUid($imei,$task_result);
+					$task_connection->close();
+				};
+				$task_connection->connect();
+				
 				$weather_service = new WeatherService ();
 				$rs_weather = $weather_service->parse ( $message );
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
