@@ -9,7 +9,7 @@ class HandleData {
 		return $data_len . $data;
 	}
 	
-	public static function async($user_id,$task_data)
+	public static function async($user_id,$task_data,$ext=null)
 	{
 		$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
 		$task_connection->send($task_data);
@@ -33,6 +33,7 @@ class HandleData {
 		$msg_array = explode ( '*', $message );
 		$msg_msg = explode ( ',', $msg_array [2] );
 		$cmd = $msg_msg [0];
+		$imei = $msg_array [1];
 		switch($cmd){
 			case 'WEATHER':
 				$weather_service = new WeatherService ();
@@ -43,6 +44,18 @@ class HandleData {
 			case 'UD':
 				$ud_parse = new EventsLbsCommon ();
 				$ud_parse->parse ( $message );
+				break;
+			case 'TK':
+				$filename = __DIR__ . '/amr/' . $imei.'_'.time() . '.amr';
+				$head_len = 22;
+				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
+				file_put_contents ( $filename, $amr, FILE_APPEND );
+				//存入数据库
+				$db=Db::getInstance('$db_watch');
+				$sql='';
+				$app_user=$db->select('app_id')->from('watch_app_watch')->where('watch_imei=123456789012345')->query();
+				
+				echo $app_user;
 				break;
 			default:
 				break;
@@ -63,7 +76,7 @@ class HandleData {
 		static $imei;
 
 		// echo $message.' xx'.PHP_EOL;
-
+		
 		$msg_array = explode ( '*', $message );
 		if (count ( $msg_array ) < 3) {
 			return;
@@ -95,13 +108,12 @@ class HandleData {
 				return;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
-				$filename = __DIR__ . '/amr/' . $imei.'_'.time() . '.amr';
-				$head_len = 22;
-				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
-				file_put_contents ( $filename, $amr, FILE_APPEND );
+			
 				$rs_tk = 'CS*' . $imei . '*TK,1';
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
+				//异步处理录音文件
+				self::async($imei,$message);
 				return;
 
 			case 'SYSTEMTIME' :
@@ -132,12 +144,10 @@ class HandleData {
 	}
 
 	/**
-	 * [handle_server_data description]
-	 *
-	 * @author wzb<wangzhibin_x@qq.com>
-	 *         @DateTime 2016-07-11T20:08:11+0800
-	 *         @处理api接口数据 $message定义为json数据
-	 */
+	* @author wzb<wangzhibin_x@foxmail.com>
+	* @date Sep 6, 2016 4:09:09 PM
+	* $message 为json数据包{"id":"","cmd":"","info":""}
+	*/
 	public static function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
 		if(!$message_data){
