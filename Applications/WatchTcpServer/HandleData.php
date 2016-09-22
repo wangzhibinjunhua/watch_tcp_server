@@ -3,25 +3,42 @@ use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
+use \GatewayWorker\Lib\Db;
 class HandleData {
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
 		return $data_len . $data;
 	}
-	
+
 	public static function async($user_id,$task_data,$ext=null)
 	{
 		$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
 		$task_connection->send($task_data);
 		$task_connection->onMessage=function($task_connection,$task_result)use($user_id)
 		{
-			if(!empty($task_result))Gateway::sendToUid($user_id,$task_result);
+			//echo "task_result:".$task_result.PHP_EOL;
+			if(!empty($task_result)){
+				$json=json_decode($task_result,true);
+				if($json){
+					foreach ($json as $arr){
+						foreach ($arr as $tel) {
+
+							echo $tel.PHP_EOL;
+							$tk_notiy=array('id'=>$tel,'cmd'=>'TK','info'=>1);
+							Gateway::sendToUid($tel,self::pack_data(json_encode($tk_notiy)));
+						}
+					}
+
+				}else{
+					Gateway::sendToUid($user_id,$task_result);
+				}
+			}
 			$task_connection->close();
 		};
 		$task_connection->connect();
 	}
-	
-	
+
+
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Sep 6, 2016 2:37:37 PM
@@ -51,11 +68,17 @@ class HandleData {
 				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
 				file_put_contents ( $filename, $amr, FILE_APPEND );
 				//存入数据库
-				$db=Db::getInstance('$db_watch');
-				$sql='';
-				$app_user=$db->select('app_id')->from('watch_app_watch')->where('watch_imei=123456789012345')->query();
-				
-				echo $app_user;
+				$db=Db::instance('db_watch');
+				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
+				//var_dump($app_user);
+				$result=json_encode($app_user);
+				foreach ($app_user as $arr){
+					foreach ($arr as $tel) {
+						$db->insert('watch_message')->cols(array('user_id'=>$tel,'file'=>$filename,'stamp'=>time()))->query();
+
+					}
+				}
+
 				break;
 			default:
 				break;
@@ -76,7 +99,7 @@ class HandleData {
 		static $imei;
 
 		// echo $message.' xx'.PHP_EOL;
-		
+
 		$msg_array = explode ( '*', $message );
 		if (count ( $msg_array ) < 3) {
 			return;
@@ -108,7 +131,7 @@ class HandleData {
 				return;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
-			
+
 				$rs_tk = 'CS*' . $imei . '*TK,1';
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
@@ -125,7 +148,7 @@ class HandleData {
 				$rs_wea = 'CS*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
-				
+
 // 				$weather_service = new WeatherService ();
 // 				$rs_weather = $weather_service->parse ( $message );
 // 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
