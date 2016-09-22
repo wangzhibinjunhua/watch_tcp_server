@@ -63,10 +63,11 @@ class HandleData {
 				$ud_parse->parse ( $message );
 				break;
 			case 'TK':
-				$filename = __DIR__ . '/amr/' . $imei.'_'.time() . '.amr';
+				$filename=$imei.'_'.time(). '.amr';
+				$filepath = '/var/www/html/core/media/childwatch/' . $filename;
 				$head_len = 22;
 				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
-				file_put_contents ( $filename, $amr, FILE_APPEND );
+				file_put_contents ( $filepath, $amr, FILE_APPEND );
 				//存入数据库
 				$db=Db::instance('db_watch');
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
@@ -74,7 +75,7 @@ class HandleData {
 				$result=json_encode($app_user);
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('user_id'=>$tel,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
 
 					}
 				}
