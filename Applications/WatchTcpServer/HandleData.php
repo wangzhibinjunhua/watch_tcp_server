@@ -170,7 +170,7 @@ class HandleData {
 	/**
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Sep 6, 2016 4:09:09 PM
-	* $message 为json数据包{"id":"","cmd":"","info":""}
+	* $message 为json数据包{"id":"","cmd":"","imei":"","info":""}
 	*/
 	public static function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
@@ -186,8 +186,21 @@ class HandleData {
 				return;
 				break;
 
-
-			// 测试代码
+			case 'tk':
+				//判断imei是否在线
+				$imei=$message_data['imei'];
+				$amr=$message_data['info'];
+				if(!Gateway::isUidOnline($imei)){
+					$rs_tk=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'offline');
+					Gateway::sendToUid($id, self::pack_data(json_encode($rs_tk)));
+				}else{
+					$rs_tk='CS*'.$imei.'*TK,'. $amr;
+					Gateway::sendToUid($imei, self::pack_data($rs_tk));
+					$rs_tk1=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'ok');
+					Gateway::sendToUid($id, self::pack_data($rs_tk1));
+				}
+				
+				break;
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
 					$file = file_get_contents ( 'test.amr' );
