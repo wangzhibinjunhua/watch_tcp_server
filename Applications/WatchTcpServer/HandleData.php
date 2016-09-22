@@ -197,9 +197,9 @@ class HandleData {
 					$rs_tk='CS*'.$imei.'*TK,'. $amr;
 					Gateway::sendToUid($imei, self::pack_data($rs_tk));
 					$rs_tk1=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'ok');
-					Gateway::sendToUid($id, self::pack_data($rs_tk1));
+					Gateway::sendToUid($id, self::pack_data(json_encode($rs_tk1)));
 				}
-				
+
 				break;
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
