@@ -23,7 +23,7 @@ class HandleData {
 					foreach ($json as $arr){
 						foreach ($arr as $tel) {
 
-							echo $tel.PHP_EOL;
+							//echo $tel.PHP_EOL;
 							$tk_notiy=array('id'=>$tel,'cmd'=>'TK','info'=>1);
 							Gateway::sendToUid($tel,self::pack_data(json_encode($tk_notiy)));
 						}
@@ -48,7 +48,8 @@ class HandleData {
 	{
 		$result='';
 		$msg_array = explode ( '*', $message );
-		$msg_msg = explode ( ',', $msg_array [2] );
+		//echo count($msg_array).PHP_EOL;
+		$msg_msg = explode ( ',', $msg_array[2] );
 		$cmd = $msg_msg [0];
 		$imei = $msg_array [1];
 		switch($cmd){
@@ -63,12 +64,9 @@ class HandleData {
 				$ud_parse->parse ( $message );
 				break;
 			case 'TK':
-				$filename=$imei.'_'.time(). '.amr';
-				$filepath = '/var/www/html/core/media/childwatch/' . $filename;
-				$head_len = 22;
-				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
-				file_put_contents ( $filepath, $amr, FILE_APPEND );
 				//存入数据库
+				$filename=$msg_msg[1];
+				//echo $filename.PHP_EOL;
 				$db=Db::instance('db_watch');
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
@@ -136,8 +134,14 @@ class HandleData {
 				$rs_tk = 'CS*' . $imei . '*TK,1';
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
+				$filename=$imei.'_'.time(). '.amr';
+				$filepath = '/var/www/html/core/media/childwatch/' . $filename;
+				$head_len = 22;
+				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
+				file_put_contents ( $filepath, $amr, FILE_APPEND );
 				//异步处理录音文件
-				self::async($imei,$message);
+				$async_msg='CS*'.$imei.'*TK,'.$filename;
+				self::async($imei,$async_msg);
 				return;
 
 			case 'SYSTEMTIME' :
@@ -183,6 +187,8 @@ class HandleData {
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
+				Gateway::sendToUid('1311234567890', self::pack_data($message));
+
 				return;
 				break;
 
