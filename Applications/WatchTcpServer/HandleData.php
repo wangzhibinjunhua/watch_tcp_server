@@ -175,6 +175,7 @@ class HandleData {
 	* @author wzb<wangzhibin_x@foxmail.com>
 	* @date Sep 6, 2016 4:09:09 PM
 	* $message 为json数据包{"id":"","cmd":"","imei":"","info":""}
+	* amr音频文件转为base64
 	*/
 	public static function handle_server_data($client_id, $message) {
 		$message_data = json_decode ( $message, true );
@@ -194,8 +195,10 @@ class HandleData {
 
 			case 'tk':
 				//判断imei是否在线
+				//echo '## tk'.PHP_EOL;
 				$imei=$message_data['imei'];
-				$amr=$message_data['info'];
+				$amr=base64_decode($message_data['info']);
+				//file_put_contents("1234.amr",$amr,FILE_APPEND);
 				if(!Gateway::isUidOnline($imei)){
 					$rs_tk=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'offline');
 					Gateway::sendToUid($id, self::pack_data(json_encode($rs_tk)));
