@@ -130,9 +130,10 @@ class HandleData {
 				return;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
-				if($msg_msg[1] == 1 || $msg_msg[1] == 0){
+				if(strlen($message) == 23){
 					return;
 				}
+				//echo "tk".PHP_EOL;
 				$rs_tk = 'CS*' . $imei . '*TK,1';
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
