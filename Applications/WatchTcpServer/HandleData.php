@@ -188,8 +188,6 @@ class HandleData {
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
-				Gateway::sendToUid('1311234567890', self::pack_data($message));
-
 				return;
 				break;
 
