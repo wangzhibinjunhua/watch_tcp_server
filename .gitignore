@@ -3,6 +3,7 @@
 .settings
 .idea
 Applications/WatchTcpServer/Config/Db.php
+Applications/BpWatch/Config/Db.php
 test.amr
 Applications/WatchTcpServer/amr/
 workerman.log
