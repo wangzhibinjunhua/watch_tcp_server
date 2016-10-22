@@ -29,7 +29,7 @@ class Mytcp
             return;
         }
         //检验数据格式
-        if(substr($buffer,4,3) != 'CS*'){
+        if(substr($buffer,4,3) != 'HA*'){
         	return;
         }
 
