@@ -182,21 +182,23 @@ class HandleData {
 				self::async($imei,$message);
 				return;
 			case 'PHOTO':
-				$photo_header=27;
+				$photo_header=25;
 				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
 				$p_filename=$imei.'_'.time(). '.jpg';
 				$p_filepath = '/var/www/html/core/media/childwatch/' . $p_filename;
 				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
+				$rs_p='CS*' . $imei . '*PHOTO,1';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
 				//异步处理
 				$async_p_msg='CS*'.$imei.'*PHOTO,'.$p_filename;
 				self::async($imei,$async_p_msg);
-				if($msg_msg[1]==0){
-					//手表主动拍照上传
-					$rs_p='CS*' . $imei . '*PHOTO,1';
-					Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
-				}else if($msg_msg[1]==1){
-					//app控制手表拍照上传	,服务器不用回复手表
-				}
+				// if($msg_msg[1]==0){
+				// 	//手表主动拍照上传
+				// 	$rs_p='CS*' . $imei . '*PHOTO,1';
+				// 	Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
+				// }else if($msg_msg[1]==1){
+				// 	//app控制手表拍照上传	,服务器不用回复手表
+				// }
 				return;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
