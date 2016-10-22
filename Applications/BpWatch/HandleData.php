@@ -52,6 +52,7 @@ class HandleData {
 		$msg_msg = explode ( ',', $msg_array[2] );
 		$cmd = $msg_msg [0];
 		$imei = $msg_array [1];
+		$media_type=0;
 		switch($cmd){
 			case 'WEATHER':
 				$weather_service = new WeatherService ();
@@ -66,6 +67,7 @@ class HandleData {
 			case 'TK':
 				//存入数据库
 				$filename=$msg_msg[1];
+				$media_type='0';
 				//echo $filename.PHP_EOL;
 				$db=Db::instance('db_watch');
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
@@ -73,11 +75,27 @@ class HandleData {
 				$result=json_encode($app_user);
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
 
 					}
 				}
 
+				break;
+			case 'PHOTO':
+				//存入数据库
+				$filename=$msg_msg[1];
+				$media_type='1';
+				//echo $filename.PHP_EOL;
+				$db=Db::instance('db_watch');
+				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
+				//var_dump($app_user);
+				$result=json_encode($app_user);
+				foreach ($app_user as $arr){
+					foreach ($arr as $tel) {
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+
+					}
+				}
 				break;
 			default:
 				break;
@@ -162,6 +180,23 @@ class HandleData {
 // 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
 				//采用异步任务处理curl耗时任务
 				self::async($imei,$message);
+				return;
+			case 'PHOTO':
+				$photo_header=27;
+				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
+				$p_filename=$imei.'_'.time(). '.jpg';
+				$p_filepath = '/var/www/html/core/media/childwatch/' . $p_filename;
+				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
+				//异步处理
+				$async_p_msg='CS*'.$imei.'*PHOTO,'.$p_filename;
+				self::async($imei,$async_p_msg);
+				if($msg_msg[1]==0){
+					//手表主动拍照上传
+					$rs_p='CS*' . $imei . '*PHOTO,1';
+					Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
+				}else if($msg_msg[1]==1){
+					//app控制手表拍照上传	,服务器不用回复手表
+				}
 				return;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');

@@ -26,7 +26,7 @@ Autoloader::setRootPath(__DIR__);
 // gateway 进程，这里使用Text协议，可以用telnet测试
 //$gateway = new Gateway("Text://120.24.36.177:8282");
 //异步任务服务
-$gateway = new Worker("Text://127.0.0.1:7272");
+$gateway = new Worker("Text://127.0.0.1:10001");
 // gateway名称，status方便查看
 $gateway->name = 'watch_server_async_gateway';
 // gateway进程数
