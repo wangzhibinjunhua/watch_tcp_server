@@ -1,10 +1,13 @@
 <?php
+require_once __DIR__ . '/../GlobalData/src/Client.php';
 use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
+use \Workerman\Lib\Timer;
 class HandleData {
+
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
 		return $data_len . $data;
@@ -73,9 +76,10 @@ class HandleData {
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
+				$sys_time=date("Y-m-d H:i:s");
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time(),'datetime'=>$sys_time))->query();
 
 					}
 				}
@@ -87,12 +91,13 @@ class HandleData {
 				$media_type='1';
 				//echo $filename.PHP_EOL;
 				$db=Db::instance('db_watch');
+				$sys_time=date("Y-m-d H:i:s");
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time(),'datetime'=>$sys_time))->query();
 
 					}
 				}
@@ -128,7 +133,16 @@ class HandleData {
 		$cmd = $msg_msg [0];
 
 		Gateway::bindUid ( $client_id, $imei );
-
+		if($cmd != 'LK'){
+			$global = new GlobalData\Client('127.0.0.1:2207');
+			//$global->$imei=time();
+			//$_SESSION[$imei]=time();
+			echo '11'.PHP_EOL;
+			if(isset($global->$imei)){
+				echo '22'.PHP_EOL;
+				Timer::del($global->$imei);
+			}
+		}
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
@@ -182,21 +196,23 @@ class HandleData {
 				self::async($imei,$message);
 				return;
 			case 'PHOTO':
-				$photo_header=27;
+				$photo_header=25;
 				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
 				$p_filename=$imei.'_'.time(). '.jpg';
 				$p_filepath = '/var/www/html/core/media/childwatch/' . $p_filename;
 				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
+				$rs_p='CS*' . $imei . '*PHOTO,1';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
 				//异步处理
 				$async_p_msg='CS*'.$imei.'*PHOTO,'.$p_filename;
 				self::async($imei,$async_p_msg);
-				if($msg_msg[1]==0){
-					//手表主动拍照上传
-					$rs_p='CS*' . $imei . '*PHOTO,1';
-					Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
-				}else if($msg_msg[1]==1){
-					//app控制手表拍照上传	,服务器不用回复手表
-				}
+				// if($msg_msg[1]==0){
+				// 	//手表主动拍照上传
+				// 	$rs_p='CS*' . $imei . '*PHOTO,1';
+				// 	Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
+				// }else if($msg_msg[1]==1){
+				// 	//app控制手表拍照上传	,服务器不用回复手表
+				// }
 				return;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
@@ -255,6 +271,39 @@ class HandleData {
 				} else {
 					Gateway::sendToAll ( $message_data ['info'] );
 				}
+				break;
+			case 'newtest':
+				$imei=$message_data['imei'];
+				$rs='HA*123456789012345*'.$message_data['info'];
+				Gateway::sendToUid($imei, self::pack_data($rs));
+				$global = new GlobalData\Client('127.0.0.1:2207');
+				$global->$imei=Timer::add(5,function()use($imei,$rs,$global){
+					static $count=0;
+					if($count>1){
+						Timer::del($global->$imei);
+						$client_arr=Gateway::getClientIdByUid($imei);
+						foreach ($client_arr as $id) {
+							# code...
+							Gateway::closeClient($id);
+
+						}
+
+					}
+					$time_now=time();
+				//	$global = new GlobalData\Client('127.0.0.1:2207');
+					//if (!isset($global->$imei)) {
+					if (!isset($_SESSION[$imei])) {
+						$_SESSION[$imei] = $time_now;
+						//continue;
+					}
+					echo $time_now." --- ".$_SESSION[$imei].'  imei:'.$imei.'  count:'.$count.PHP_EOL;
+					if($time_now - $_SESSION[$imei] >20){
+						Gateway::sendToUid($imei, self::pack_data($rs));
+						$_SESSION[$imei]=time();
+						$count++;
+					}
+
+				});
 				break;
 			default :
 				// code...
