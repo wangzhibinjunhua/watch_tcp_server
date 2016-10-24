@@ -5,6 +5,9 @@ use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
 class HandleData {
+	
+	
+	
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
 		return $data_len . $data;
@@ -73,9 +76,10 @@ class HandleData {
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
+				$sys_time=date("Y-m-d H:i:s");
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time(),'datetime'=>$sys_time))->query();
 
 					}
 				}
@@ -87,12 +91,13 @@ class HandleData {
 				$media_type='1';
 				//echo $filename.PHP_EOL;
 				$db=Db::instance('db_watch');
+				$sys_time=date("Y-m-d H:i:s");
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
-						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time()))->query();
+						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time(),'datetime'=>$sys_time))->query();
 
 					}
 				}
