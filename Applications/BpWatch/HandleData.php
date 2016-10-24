@@ -277,6 +277,7 @@ class HandleData {
 				$rs='HA*123456789012345*'.$message_data['info'];
 				Gateway::sendToUid($imei, self::pack_data($rs));
 				$global = new GlobalData\Client('127.0.0.1:2207');
+				Timer::del($global->$imei);
 				$global->$imei=Timer::add(5,function()use($imei,$rs,$global){
 					static $count=0;
 					if($count>1){
