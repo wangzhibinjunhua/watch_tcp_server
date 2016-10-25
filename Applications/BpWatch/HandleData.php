@@ -171,7 +171,7 @@ class HandleData {
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
 				$filename=$imei.'_'.time(). '.amr';
-				$filepath = '/var/www/html/core/media/childwatch/' . $filename;
+				$filepath = '/var/www/html/core/media/hawatch/' . $filename;
 				$head_len = 22;
 				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
 				file_put_contents ( $filepath, $amr, FILE_APPEND );
@@ -200,7 +200,7 @@ class HandleData {
 				$photo_header=25;
 				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
 				$p_filename=$imei.'_'.time(). '.jpg';
-				$p_filepath = '/var/www/html/core/media/childwatch/' . $p_filename;
+				$p_filepath = '/var/www/html/core/media/hawatch/' . $p_filename;
 				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
 				$rs_p='CS*' . $imei . '*PHOTO,1';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
