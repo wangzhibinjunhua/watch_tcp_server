@@ -35,10 +35,10 @@ $internal_gateway->registerAddress = '127.0.0.1:1238';
 //$gateway->pingInterval = 10;
 // 心跳数据
 //$gateway->pingData = '{"type":"ping"}';
-$gateway->pingInterval = 60;
+$internal_gateway->pingInterval = 60;
 //心跳数据
-$gateway->pingData = '';
-$gateway->pingNotResponseLimit = 3;
+$internal_gateway->pingData = '';
+$internal_gateway->pingNotResponseLimit = 3;
 
 /*
 // 当客户端连接上来时，设置连接的onWebSocketConnect，即在websocket握手时的回调
