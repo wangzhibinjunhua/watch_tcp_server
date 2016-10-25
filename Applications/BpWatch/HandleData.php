@@ -133,7 +133,8 @@ class HandleData {
 		$cmd = $msg_msg [0];
 
 		Gateway::bindUid ( $client_id, $imei );
-		if($cmd != 'LK'){
+		
+		/*if($cmd != 'LK'){
 			$global = new GlobalData\Client('127.0.0.1:2207');
 			//$global->$imei=time();
 			//$_SESSION[$imei]=time();
@@ -142,7 +143,7 @@ class HandleData {
 				echo '22'.PHP_EOL;
 				Timer::del($global->$imei);
 			}
-		}
+		}*/// for newtest 
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :

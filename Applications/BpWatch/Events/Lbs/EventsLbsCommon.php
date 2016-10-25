@@ -150,7 +150,7 @@ class EventsLbsCommon {
 		$redis_watch->connect('127.0.0.1',6379);
 		$redis_watch->auth("huayingtek2016");
 		//echo $msg;
-		$redis_watch->rPush("watch_info",$msg);
+		$redis_watch->rPush("ha_watch_info",$msg);
 		$redis_watch->close();
 	}
 }
