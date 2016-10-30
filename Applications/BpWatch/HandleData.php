@@ -121,24 +121,7 @@ class HandleData {
 		static $imei;
 
 		// echo $message.' xx'.PHP_EOL;
-		//for debug
-		if(true){
-			$sys_time=date("Y-m-d H:i:s");
-			$debug_msg=$message.' --'.$sys_time;
-			$con = new AsyncTcpConnection('ws://127.0.0.1:9999');
-			
-			$con->onConnect = function($con) {
-				$con->send($debug_msg);
-			};
-			
-			$con->onMessage = function($con, $data) {
-				//echo $data;
-			};
-			
-			$con->connect();
-		}
-		//end
-	
+
 
 		$msg_array = explode ( '*', $message );
 		if (count ( $msg_array ) < 3) {
