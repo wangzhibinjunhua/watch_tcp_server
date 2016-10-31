@@ -60,7 +60,7 @@ class HandleData {
 			case 'WEATHER':
 				$weather_service = new WeatherService ();
 				$rs_weather = $weather_service->parse ( $message );
-				$rs_wea = 'CS*' . $imei . '*WEATHER,';
+				$rs_wea = 'HA*' . $imei . '*WEATHER,';
 				$result=self::pack_data($rs_wea . $rs_weather);
 				break;
 			case 'UD':
@@ -153,13 +153,13 @@ class HandleData {
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
-				$rs_lk = 'CS*' . $imei . '*LK';
+				$rs_lk = 'HA*' . $imei . '*LK';
 				// $rs_lk_len=sprintf("%04x",strlen($rs));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
 				return;
 			// 位置上报
 			case 'UD' :
-				$rs_ud = 'CS*' . $imei . '*UD';
+				$rs_ud = 'HA*' . $imei . '*UD';
 				// $rs_ud_len=sprintf("%04x",strlen($rs_ud));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_ud ) );
 				//$ud_parse = new EventsLbsCommon ();
@@ -173,7 +173,7 @@ class HandleData {
 					return;
 				}
 				//echo "tk".PHP_EOL;
-				$rs_tk = 'CS*' . $imei . '*TK,1';
+				$rs_tk = 'HA*' . $imei . '*TK,1';
 				// $rs_tk_len=sprintf("%04x",strlen($rs_tk));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_tk ) );
 				$filename=$imei.'_'.time(). '.amr';
@@ -182,17 +182,17 @@ class HandleData {
 				$amr = substr ( $message, $head_len, strlen ( $message ) - $head_len );
 				file_put_contents ( $filepath, $amr, FILE_APPEND );
 				//异步处理录音文件
-				$async_msg='CS*'.$imei.'*TK,'.$filename;
+				$async_msg='HA*'.$imei.'*TK,'.$filename;
 				self::async($imei,$async_msg);
 				return;
 
 			case 'SYSTEMTIME' :
-				$rs_st = 'CS*' . $imei . '*SYSTEMTIME,' . time () . '000';
+				$rs_st = 'HA*' . $imei . '*SYSTEMTIME,' . time () . '000';
 				// $rs_st_len=sprintf("%04x",strlen($rs_st));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_st ) );
 				return;
 			case 'WEATHER' :
-				$rs_wea = 'CS*' . $imei . '*WEATHER,';
+				$rs_wea = 'HA*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
 
@@ -208,10 +208,10 @@ class HandleData {
 				$p_filename=$imei.'_'.time(). '.jpg';
 				$p_filepath = '/var/www/html/core/media/hawatch/' . $p_filename;
 				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
-				$rs_p='CS*' . $imei . '*PHOTO,1';
+				$rs_p='HA*' . $imei . '*PHOTO,1';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
 				//异步处理
-				$async_p_msg='CS*'.$imei.'*PHOTO,'.$p_filename;
+				$async_p_msg='HA*'.$imei.'*PHOTO,'.$p_filename;
 				self::async($imei,$async_p_msg);
 				// if($msg_msg[1]==0){
 				// 	//手表主动拍照上传
@@ -262,7 +262,7 @@ class HandleData {
 					$rs_tk=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'offline');
 					Gateway::sendToUid($id, self::pack_data(json_encode($rs_tk)));
 				}else{
-					$rs_tk='CS*'.$imei.'*TK,'. $amr;
+					$rs_tk='HA*'.$imei.'*TK,'. $amr;
 					Gateway::sendToUid($imei, self::pack_data($rs_tk));
 					$rs_tk1=array('id'=>$id,'cmd'=>'tk','imei'=>$imei,'info'=>'ok');
 					Gateway::sendToUid($id, self::pack_data(json_encode($rs_tk1)));
@@ -272,7 +272,7 @@ class HandleData {
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
 					$file = file_get_contents ( 'test.amr' );
-					$rs = 'CS*201508220452222*TK,' . $file;
+					$rs = 'HA*201508220452222*TK,' . $file;
 					// $rs_len=sprintf("%04x",strlen($rs));
 					Gateway::sendToAll ( self::pack_data ( $rs ) );
 				} else {
