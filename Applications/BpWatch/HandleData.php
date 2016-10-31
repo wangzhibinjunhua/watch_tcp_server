@@ -124,13 +124,7 @@ class HandleData {
 		//for debug
 		if(true){
 			$debug_info=$message.' --'.date("Y-m-d H:i:s");
-			$task_connection=new AsyncTcpConnection('Text://127.0.0.1:10004');
-			$task_connection->send($debug_info);
-			$task_connection->onMessage=function($task_connection,$task_result)
-			{
-				$task_connection->close();
-			};
-			$task_connection->connect();
+			Gateway::sendToGroup('debug1',$debug_info);
 		}
 		//end
 
@@ -145,7 +139,7 @@ class HandleData {
 		$cmd = $msg_msg [0];
 
 		Gateway::bindUid ( $client_id, $imei );
-		
+
 		/*if($cmd != 'LK'){
 			$global = new GlobalData\Client('127.0.0.1:2207');
 			//$global->$imei=time();
@@ -155,7 +149,7 @@ class HandleData {
 				echo '22'.PHP_EOL;
 				Timer::del($global->$imei);
 			}
-		}*/// for newtest 
+		}*/// for newtest
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
