@@ -15,7 +15,7 @@ class HandleData {
 
 	public static function async($user_id,$task_data,$ext=null)
 	{
-		$task_connection=new AsyncTcpConnection('Text://127.0.0.1:7272');
+		$task_connection=new AsyncTcpConnection('Text://127.0.0.1:10001');
 		$task_connection->send($task_data);
 		$task_connection->onMessage=function($task_connection,$task_result)use($user_id)
 		{
@@ -90,7 +90,7 @@ class HandleData {
 				$filename=$msg_msg[1];
 				$media_type='1';
 				//echo $filename.PHP_EOL;
-				
+
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
