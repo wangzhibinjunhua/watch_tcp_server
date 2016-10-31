@@ -30,7 +30,7 @@ $gateway = new Worker("Text://127.0.0.1:10001");
 // gateway名称，status方便查看
 $gateway->name = 'watch_server_async_gateway';
 // gateway进程数
-$gateway->count = 20;
+$gateway->count = 40;
 
 $gateway->onMessage=function($connection,$message)
 {

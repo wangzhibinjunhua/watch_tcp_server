@@ -56,6 +56,8 @@ class HandleData {
 		$cmd = $msg_msg [0];
 		$imei = $msg_array [1];
 		$media_type=0;
+		$sys_time=date("Y-m-d H:i:s");
+		$db=Db::instance('db_watch');
 		switch($cmd){
 			case 'WEATHER':
 				$weather_service = new WeatherService ();
@@ -72,11 +74,9 @@ class HandleData {
 				$filename=$msg_msg[1];
 				$media_type='0';
 				//echo $filename.PHP_EOL;
-				$db=Db::instance('db_watch');
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
-				$sys_time=date("Y-m-d H:i:s");
 				foreach ($app_user as $arr){
 					foreach ($arr as $tel) {
 						$db->insert('watch_message')->cols(array('type'=>$media_type,'user_id'=>$tel,'imei'=>$imei,'file'=>$filename,'stamp'=>time(),'datetime'=>$sys_time))->query();
@@ -90,8 +90,7 @@ class HandleData {
 				$filename=$msg_msg[1];
 				$media_type='1';
 				//echo $filename.PHP_EOL;
-				$db=Db::instance('db_watch');
-				$sys_time=date("Y-m-d H:i:s");
+				
 				$app_user=$db->select('app_id')->from('watch_app_watch')->where("watch_imei=$imei")->query();
 				//var_dump($app_user);
 				$result=json_encode($app_user);
@@ -101,6 +100,20 @@ class HandleData {
 
 					}
 				}
+				break;
+			case 'HR':
+				$health_type=0;
+				$hr_data=$msg_msg[1];
+				$db->insert('watch_health_data')->cols(array('type'=>$health_type,'hr'=>$hr_data,'imei'=>$imei,'unix_time'=>time(),'create_time'=>$sys_time))->query();
+				break;
+			case 'BP':
+				$health_type=1;
+				$hr_data=$msg_msg[3];
+				$bph=$msg_msg[1];
+				$bpl=$msg_msg[2];
+				$db->insert('watch_health_data')->cols(array('type'=>$health_type,'hr'=>$hr_data,'bph'=>$bph,'bpl'=>$bpl,'imei'=>$imei,'unix_time'=>time(),'create_time'=>$sys_time))->query();
+				break;
+			case 'ECG':
 				break;
 			default:
 				break;
@@ -156,6 +169,21 @@ class HandleData {
 				$rs_lk = 'HA*' . $imei . '*LK';
 				// $rs_lk_len=sprintf("%04x",strlen($rs));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
+				return;
+			case 'HR':
+				$rs='HA*'.$imei.'*HR';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				self::async($imei,$message);
+				return;
+			case 'BP':
+				$rs='HA*'.$imei.'*BP';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				self::async($imei,$message);
+				return;
+			case 'ECG':
+				$rs='HA*'.$imei.'*ECG';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				self::async($imei,$message);
 				return;
 			// 位置上报
 			case 'UD' :
