@@ -65,6 +65,11 @@ class Events
         }else if($_SERVER['GATEWAY_PORT'] == 9292){
 			HandleData::handle_server_data($client_id, $message);
             //$handle->handle_server_data($client_id,$message);
+        }else if($_SERVER['GATEWAY_PORT'] == 9998){//for debug
+            if($message != 'huayingtek'){
+                Gateway::closeClient($client_id);
+            }
+            Gateway::joinGroup($client_id,'debug2');
         }
 
    }

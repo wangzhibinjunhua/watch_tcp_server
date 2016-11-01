@@ -121,6 +121,12 @@ class HandleData {
 		static $imei;
 
 		// echo $message.' xx'.PHP_EOL;
+		//for debug
+		if(true){
+			$debug_info=$message.' --'.date("Y-m-d H:i:s");
+			Gateway::sendToGroup('debug2',$debug_info);
+		}
+		//end
 
 		$msg_array = explode ( '*', $message );
 		if (count ( $msg_array ) < 3) {
