@@ -304,7 +304,11 @@ class HandleData {
 					// $rs_len=sprintf("%04x",strlen($rs));
 					Gateway::sendToAll ( self::pack_data ( $rs ) );
 				} else {
-					Gateway::sendToAll ( $message_data ['info'] );
+					$tmsg=$message_data ['info'];
+					$tmsg_array = explode ( '*', $tmsg );
+					$timei=$tmsg_array[1];
+					//Gateway::sendToAll ( $message_data ['info'] );
+					Gateway::sendToUid($timei,$tmsg);
 				}
 				break;
 			case 'newtest':
