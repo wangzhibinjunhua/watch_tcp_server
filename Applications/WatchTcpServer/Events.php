@@ -19,7 +19,7 @@
  */
 //declare(ticks=1);
 
-//use \GatewayWorker\Lib\Gateway;
+use \GatewayWorker\Lib\Gateway;
 //use \Workerman\Lib\Timer;
 /**
  * 主逻辑

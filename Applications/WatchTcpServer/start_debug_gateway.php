@@ -35,7 +35,7 @@ $debug->count = 2;
 $debug->lanIp = '127.0.0.1';
 // 内部通讯起始端口，假如$gateway->count=4，起始端口为4000
 // 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口
-$debug->startPort = 2826;
+$debug->startPort = 3000;
 // 服务注册地址
 $debug->registerAddress = '127.0.0.1:1238';
 
