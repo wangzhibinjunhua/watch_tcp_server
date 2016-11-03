@@ -15,7 +15,7 @@ $max = $redis->lLen("watch_info");
 $showtime=date("Y-m-d H:i:s");
 echo $max.'----'.$showtime.PHP_EOL;
 //获取消息队列的内容
-$insert_sql='insert into watch_info (imei,gps_lon,gps_lat,watch_time,system_time,location_lon,location_lat,location_content,location_type,ud_content,battery) values ';
+$insert_sql='insert into watch_info (imei,gps_lon,gps_lat,watch_time,system_time,location_lon,location_lat,location_content,location_type,ud_content,battery,unix_time) values ';
 
 //回滚数组
 $roll_back_arr=array();

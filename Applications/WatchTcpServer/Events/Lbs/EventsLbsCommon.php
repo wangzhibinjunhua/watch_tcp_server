@@ -118,7 +118,8 @@ class EventsLbsCommon {
 		// echo $sql.PHP_EOL;
 		// echo " ".PHP_EOL;
 // 		$db_watch->query($sql);
- 		$msg=" '$imei','$gps_lon','$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat','$location_content','$location_type','$ud_content','$battery'";
+ 		$unix_time=time();
+ 		$msg=" '$imei','$gps_lon','$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat','$location_content','$location_type','$ud_content','$battery','$unix_time'";
 
 		self::save_db($msg);
 	}
