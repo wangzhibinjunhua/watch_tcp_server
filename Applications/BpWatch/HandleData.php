@@ -69,6 +69,10 @@ class HandleData {
 				$ud_parse = new EventsLbsCommon ();
 				$ud_parse->parse ( $message );
 				break;
+			case 'AL':
+				$al_parse=new EventsLbsCommon ();
+				$al_parse->parse ( $message );
+				break;
 			case 'TK':
 				//存入数据库
 				$filename=$msg_msg[1];
@@ -193,6 +197,11 @@ class HandleData {
 				//$ud_parse = new EventsLbsCommon ();
 				//$ud_parse->parse ( $message );
 				//用异步任务处理
+				self::async($imei,$message);
+				return;
+			case 'AL':
+				$rs='HA*'.$imei.'*AL';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
 				return;
 			// 语音
