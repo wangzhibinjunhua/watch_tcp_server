@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * This file is part of workerman.
  *
@@ -18,7 +18,7 @@ use \Workerman\Protocols\Websocket;
 // 自动加载类
 require_once __DIR__ . '/../../Workerman/Autoloader.php';
 
-$recv_worker = new Worker('tcp://0.0.0.0:8080');
+$recv_worker = new Worker('Mytcp://0.0.0.0:8080');
 $recv_worker->onWorkerStart = function($recv_worker)
 {
     $send_worker = new Worker('Websocket://0.0.0.0:8008');
@@ -31,10 +31,14 @@ $recv_worker->onWorkerStart = function($recv_worker)
 
 $recv_worker->onMessage = function($connection, $data)use($recv_worker)
 {
+     echo "rr".PHP_EOL;
+    //file_put_contents ( "test.jpg", $data);
     foreach($recv_worker->sendWorker->connections as $send_connection)
     {
         //$send_connection->websocketType = "\x82";
-        $send_connection->send($data);
+        echo "send".PHP_EOL;
+        $pic=file_get_contents("test.jpg");
+        $send_connection->send($pic);
     }
 };
 

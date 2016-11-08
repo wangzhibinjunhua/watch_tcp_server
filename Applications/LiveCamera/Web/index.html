@@ -7,10 +7,11 @@
     <img id="receiver" style="width:640px;height:480px"/>
 
     <script type="text/javascript" charset="utf-8">
-        var receiver_socket = new WebSocket("ws://"+document.domain+":8008");
+        var receiver_socket = new WebSocket("ws://120.76.47.120:8008");
         var image = document.getElementById('receiver');
         receiver_socket.onmessage = function(data)
         {
+            alert("1");
             image.src=data.data;
         }
     </script>
