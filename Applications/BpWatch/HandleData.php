@@ -189,6 +189,10 @@ class HandleData {
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
 				return;
+			case 'SLEEP':
+				$rs='HA*'.$imei.'*SLEEP';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				return;
 			// 位置上报
 			case 'UD' :
 				$rs_ud = 'HA*' . $imei . '*UD';
