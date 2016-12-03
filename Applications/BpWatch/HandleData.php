@@ -177,38 +177,49 @@ class HandleData {
 		// 统计的产生，接口调用是否成功、错误码、错误日志
 		$success = true; $code = 0; $msg = '';
 		// 上报结果
-		$code=$cmd;
-		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
+		//$code=$cmd;
+		//StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
 		//end statistics
 		
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
+				$code=1;
 				$rs_lk = 'HA*' . $imei . '*LK';
 				// $rs_lk_len=sprintf("%04x",strlen($rs));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
-				return;
+				//return;
+				break;
 			case 'HR':
+				$code=3;
 				$rs='HA*'.$imei.'*HR';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			case 'BP':
+				$code=4;
 				$rs='HA*'.$imei.'*BP';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			case 'ECG':
+				$code=5;
 				$rs='HA*'.$imei.'*ECG';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			case 'SLEEP':
+				$code=6;
 				$rs='HA*'.$imei.'*SLEEP';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
-				return;
+				//return;
+				break;
 			// 位置上报
 			case 'UD' :
+				$code=9;
 				$rs_ud = 'HA*' . $imei . '*UD';
 				// $rs_ud_len=sprintf("%04x",strlen($rs_ud));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_ud ) );
@@ -216,16 +227,21 @@ class HandleData {
 				//$ud_parse->parse ( $message );
 				//用异步任务处理
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			case 'AL':
+				$code=7;
 				$rs='HA*'.$imei.'*AL';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
+				$code=2;
 				if(strlen($message) == 23){
-					return;
+					//return;
+					break;
 				}
 				//echo "tk".PHP_EOL;
 				$rs_tk = 'HA*' . $imei . '*TK,1';
@@ -239,14 +255,18 @@ class HandleData {
 				//异步处理录音文件
 				$async_msg='HA*'.$imei.'*TK,'.$filename;
 				self::async($imei,$async_msg);
-				return;
+				//return;
+				break;
 
 			case 'SYSTEMTIME' :
+				$code=8;
 				$rs_st = 'HA*' . $imei . '*SYSTEMTIME,' . time () . '000';
 				// $rs_st_len=sprintf("%04x",strlen($rs_st));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_st ) );
-				return;
+				break;
+				//return;
 			case 'WEATHER' :
+				$code=11;
 				$rs_wea = 'HA*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
@@ -256,8 +276,10 @@ class HandleData {
 // 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . $rs_weather ) );
 				//采用异步任务处理curl耗时任务
 				self::async($imei,$message);
-				return;
+				//return;
+				break;
 			case 'PHOTO':
+				$code=12;
 				$photo_header=25;
 				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
 				$p_filename=$imei.'_'.time(). '.jpg';
@@ -275,16 +297,21 @@ class HandleData {
 				// }else if($msg_msg[1]==1){
 				// 	//app控制手表拍照上传	,服务器不用回复手表
 				// }
-				return;
+				//return;
+				break;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
 				//echo json_encode($rs_test).PHP_EOL;
 				Gateway::sendToUid ( '12345678901', self::pack_data ( json_encode($rs_test)) );
-				return;
+				//return;
 				break;
 			default :
-				return;
+				//return;
+				break;
 		}
+		
+		//统计
+		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
 	}
 
 	/**
