@@ -19,7 +19,7 @@ use \Workerman\WebServer;
 // WebServer
 $web = new WebServer("http://0.0.0.0:55757");
 $web->name = 'StatisticWeb';
-$web->addRoot('www.your_domain.com', __DIR__.'/Web');
+$web->addRoot('120.76.47.120', __DIR__.'/Web');
 
 // 如果不是在根目录启动，则运行runAll方法
 if(!defined('GLOBAL_START'))
