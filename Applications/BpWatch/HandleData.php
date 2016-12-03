@@ -303,12 +303,12 @@ class HandleData {
 		//echo $message_data ['cmd'] . PHP_EOL;
 		//statistics
 		// 统计开始
-		StatisticClient::tick("bp_watch", 'watch_data');
+		StatisticClient::tick("bp_watch", 'app_data');
 		// 统计的产生，接口调用是否成功、错误码、错误日志
 		$success = true; $code = 0; $msg = '';
 		// 上报结果
 		$msg=$id.':'.$message_data ['cmd'];
-		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
+		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
 		switch ($message_data ['cmd']) {
 			case 'ping':
