@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../GlobalData/src/Client.php';
+require_once __DIR__ . '/../Statistics/Clients/StatisticClient.php';
 use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
@@ -134,6 +135,8 @@ class HandleData {
 	 *         LENGTHCS*YYYYYYYYYY*LK,msg 格式,YYYY是15位数字Imei号
 	 */
 	public static function handle_watch_data($client_id, $message) {
+		
+
 		static $filename = '1.amr';
 		static $imei;
 
@@ -167,6 +170,17 @@ class HandleData {
 				Timer::del($global->$imei);
 			}
 		}*/// for newtest
+		
+		//statistics
+		// 统计开始
+		StatisticClient::tick("bp_watch", 'watch_data');
+		// 统计的产生，接口调用是否成功、错误码、错误日志
+		$success = true; $code = 0; $msg = '';
+		// 上报结果
+		$msg=$imei.':'.$cmd;
+		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
+		//end statistics
+		
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
@@ -287,6 +301,15 @@ class HandleData {
 		$id=$message_data['id'];
 		Gateway::bindUid ( $client_id, $id );
 		//echo $message_data ['cmd'] . PHP_EOL;
+		//statistics
+		// 统计开始
+		StatisticClient::tick("bp_watch", 'watch_data');
+		// 统计的产生，接口调用是否成功、错误码、错误日志
+		$success = true; $code = 0; $msg = '';
+		// 上报结果
+		$msg=$id.':'.$message_data ['cmd'];
+		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
+		//end statistics
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
