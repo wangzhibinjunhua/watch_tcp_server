@@ -177,7 +177,7 @@ class HandleData {
 		// 统计的产生，接口调用是否成功、错误码、错误日志
 		$success = true; $code = 0; $msg = '';
 		// 上报结果
-		$msg=$imei.':'.$cmd;
+		$code=$cmd;
 		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
 		//end statistics
 		
@@ -307,7 +307,7 @@ class HandleData {
 		// 统计的产生，接口调用是否成功、错误码、错误日志
 		$success = true; $code = 0; $msg = '';
 		// 上报结果
-		$msg=$id.':'.$message_data ['cmd'];
+		$code=$message_data ['cmd'];
 		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
 		switch ($message_data ['cmd']) {
