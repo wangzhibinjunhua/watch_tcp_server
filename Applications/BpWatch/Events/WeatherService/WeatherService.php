@@ -13,15 +13,17 @@ class WeatherService
 	public static function parse($data)
 	{
 		$data_arr = explode ( ',', $data );
-		$gps_status=$data_arr[1];
+		//update by wzb 20161206 增加了时间,故都后移两位
+		$gps_status=$data_arr[1+2];
 		$cityname='';
 		if($gps_status == 'A'){
 			//gps 定位
-			$gps_lon_arr=explode('.', $data_arr[3]);
+			$gps_lon_arr=explode('.', $data_arr[3+2]);
 			$gps_lon=$gps_lon_arr[0].'.'.substr($gps_lon_arr[1], 0,6);
-			$gps_lat_arr=explode('.', $data_arr[2]);
+			$gps_lat_arr=explode('.', $data_arr[2+2]);
 			$gps_lat=$gps_lat_arr[0].'.'.substr($gps_lat_arr[1], 0,6);
 			$cityname=self::get_cityname_by_gps($gps_lon.','.$gps_lat);
+			//file_put_contents("temp.log",$cityname.PHP_EOL,FILE_APPEND);
 			if($cityname == null){
 				return '2';
 			}
@@ -47,7 +49,7 @@ class WeatherService
 	{
 		$curl=new CUrl();
 		$api='http://lib.huayinghealth.com/lib-x/?service=geocode.regeo&';
-		$url=$api.'location='.$gps_lon.','.$gps_lat;
+		$url=$api.'location='.$location;
 		$rs=$curl->get($url);
 		$rs_arr=json_decode($rs,true);
 		if($rs_arr['data'] == null){
@@ -65,24 +67,25 @@ class WeatherService
 	*/
 	public static function get_cityname_by_wifi($data)
 	{
+		//update by wzb 20161206 增加了时间,故都后移两位,增加了gsm时延,后面再后移一位
 		$data_arr = explode ( ',', $data );
-		$state_num = $data_arr [4];
-		$mcc = $data_arr [5];
-		$mnc=$data_arr[6];
-		$lac=$data_arr[7];
-		$cellid=$data_arr[8];
-		$signle=$data_arr[9];
+		$state_num = $data_arr [4+2];
+		$mcc = $data_arr [5+2];
+		$mnc=$data_arr[6+2+1];
+		$lac=$data_arr[7+2+1];
+		$cellid=$data_arr[8+2+1];
+		$signle=$data_arr[9+2+1];
 		$bts_others='';
 		for($i=1;$i<$state_num;$i++){
-			$id=10+($i-1)*3;
+			$id=10+2+1+($i-1)*3;
 			$bts_others .=$mcc.','.$mnc.','.$data_arr[$id].','.$data_arr[$id+1].','.$data_arr[$id+2].'|';
 		}
 		$bts_main=$mcc.','.$mnc.','.$lac.','.$cellid.','.$signle;
 
-		$wifi_num=$data_arr[10+($state_num-1)*3];
+		$wifi_num=$data_arr[10+2+1+($state_num-1)*3];
 		$wifi_info='';
 		for($j=1;$j<=$wifi_num;$j++){
-			$wifi_index=11+($state_num-1)*3+($j-1)*3;
+			$wifi_index=11+2+1+($state_num-1)*3+($j-1)*3;
 			$wifi_info.=$data_arr[$wifi_index+1].','.$data_arr[$wifi_index+2].','.$data_arr[$wifi_index].'|';
 		}
 		//echo 'bts='.$bts_main.'&nearbts='.$bts_others.'$macs='.$wifi_info;
