@@ -22,7 +22,7 @@ use \Workerman\WebServer;
 $statistic_worker = new StatisticWorker("Statistic://0.0.0.0:55656");
 $statistic_worker->transport = 'udp';
 $statistic_worker->name = 'StatisticWorker';
-
+$statistic_worker->count=4;
 // 如果不是在根目录启动，则运行runAll方法
 if(!defined('GLOBAL_START'))
 {

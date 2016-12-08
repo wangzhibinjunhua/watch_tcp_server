@@ -135,7 +135,7 @@ class HandleData {
 	 *         LENGTHCS*YYYYYYYYYY*LK,msg 格式,YYYY是15位数字Imei号
 	 */
 	public static function handle_watch_data($client_id, $message) {
-		
+
 
 		static $filename = '1.amr';
 		static $imei;
@@ -170,7 +170,7 @@ class HandleData {
 				Timer::del($global->$imei);
 			}
 		}*/// for newtest
-		
+
 		//statistics
 		// 统计开始
 		StatisticClient::tick("bp_watch", 'watch_data');
@@ -180,7 +180,7 @@ class HandleData {
 		//$code=$cmd;
 		//StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
 		//end statistics
-		
+
 		switch ($cmd) {
 			// 链路保持
 			case 'LK' :
@@ -267,6 +267,9 @@ class HandleData {
 				//return;
 			case 'WEATHER' :
 				$code=11;
+				if($msg_msg[1]=='1'){
+					break;
+				}
 				$rs_wea = 'HA*' . $imei . '*WEATHER,';
 				// $rs_wea_len=sprintf("%04x",strlen($rs_wea));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_wea . '1' ) );
@@ -309,7 +312,7 @@ class HandleData {
 				//return;
 				break;
 		}
-		
+
 		//统计
 		StatisticClient::report('bp_watch', 'watch_data', $success, $code, $msg);
 	}
