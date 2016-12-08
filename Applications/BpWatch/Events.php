@@ -66,6 +66,14 @@ class Events
 			HandleData::handle_server_data($client_id, $message);
             //$handle->handle_server_data($client_id,$message);
         }else if($_SERVER['GATEWAY_PORT'] == 9999){//for debug
+        	//statistics
+        	// 统计开始
+        	StatisticClient::tick("bp_watch", 'debug_data');
+        	// 统计的产生，接口调用是否成功、错误码、错误日志
+        	$success = true; $code = 99999; $msg = '';
+        	// 上报结果
+        	StatisticClient::report('bp_watch', 'debug_data', $success, $code, $msg);
+        	//end statistics
             if($message != 'huayingtek'){
                 Gateway::closeClient($client_id);
             }

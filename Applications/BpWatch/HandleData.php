@@ -332,7 +332,7 @@ class HandleData {
 		// 统计开始
 		StatisticClient::tick("bp_watch", 'app_data');
 		// 统计的产生，接口调用是否成功、错误码、错误日志
-		$success = true; $code = 0; $msg = '';
+		$success = true; $code = 910002; $msg = '';
 		// 上报结果
 		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
