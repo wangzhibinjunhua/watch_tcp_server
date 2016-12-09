@@ -120,6 +120,15 @@ class HandleData {
 				break;
 			case 'ECG':
 				break;
+			case 'SLEEP':
+				$health_type=3;
+				$start_time=$msg_msg[1];
+				$end_time=$msg_msg[2];
+				$nsleep=$msg_msg[3];
+				$lsleep=$msg_msg[4];
+				$dsleep=$msg_msg[5];
+				$db->insert('watch_health_data')->cols(array('type'=>$health_type,'start_time'=>$start_time,'end_time'=>$end_time,'nsleep'=>$nsleep,'lsleep'=>$lsleep,'dsleep'=>$dsleep,'imei'=>$imei,'unix_time'=>time(),'create_time'=>$sys_time))->query();
+				break;
 			default:
 				break;
 		}
@@ -215,6 +224,7 @@ class HandleData {
 				$code=6;
 				$rs='HA*'.$imei.'*SLEEP';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				self::async($imei,$message);
 				//return;
 				break;
 			// 位置上报
