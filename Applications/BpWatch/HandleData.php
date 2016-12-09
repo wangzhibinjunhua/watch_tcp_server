@@ -377,7 +377,8 @@ class HandleData {
 					$file = file_get_contents ( 'test.amr' );
 					$rs = 'HA*201508220452222*TK,' . $file;
 					// $rs_len=sprintf("%04x",strlen($rs));
-					Gateway::sendToAll ( self::pack_data ( $rs ) );
+					//Gateway::sendToAll ( self::pack_data ( $rs ) );
+					Gateway::sendToGroup('watch_g1',self::pack_data ( $rs ));
 				} else {
 					$tmsg=$message_data ['info'];
 					$tmsg_array = explode ( '*', $tmsg );

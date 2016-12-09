@@ -40,6 +40,9 @@ class Events
         //Gateway::sendToClient($client_id, "Hello $client_id");
         // 向所有人发送
         //Gateway::sendToAll("$client_id login");
+         if($_SERVER['GATEWAY_PORT'] == 10003){
+            Gateway::joinGroup($client_id,'watch_g1');
+         }
     }
 
    /**
@@ -62,7 +65,7 @@ class Events
         if($_SERVER['GATEWAY_PORT'] == 10003){
             //$handle->handle_watch_data($client_id,$message);
             HandleData::handle_watch_data($client_id, $message);
-            Gateway::joinGroup($client_id,'watch_g1');
+
         }else if($_SERVER['GATEWAY_PORT'] == 10002){
 			HandleData::handle_server_data($client_id, $message);
 			Gateway::joinGroup($client_id,'app_g1');
