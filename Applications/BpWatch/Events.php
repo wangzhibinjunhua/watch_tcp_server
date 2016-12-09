@@ -62,8 +62,10 @@ class Events
         if($_SERVER['GATEWAY_PORT'] == 10003){
             //$handle->handle_watch_data($client_id,$message);
             HandleData::handle_watch_data($client_id, $message);
+            Gateway::joinGroup($client_id,'watch_g1');
         }else if($_SERVER['GATEWAY_PORT'] == 10002){
 			HandleData::handle_server_data($client_id, $message);
+			Gateway::joinGroup($client_id,'app_g1');
             //$handle->handle_server_data($client_id,$message);
         }else if($_SERVER['GATEWAY_PORT'] == 9999){//for debug
         	//statistics
