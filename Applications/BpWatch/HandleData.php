@@ -8,6 +8,25 @@ use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
 use \Workerman\Lib\Timer;
 class HandleData {
+	
+	//cmd
+	const API_IS_ONLINE=1001;
+	const API_SET_UPLODE_MODE=1002;
+	const API_MONITOR=1003;
+	const API_SET_SOS_NUMBER=1004;
+	const API_RESET=1005;
+	const API_REBOOT=1006;
+	const API_REQ_LOCATION=1007;
+	const API_SHUTDOWN=1008;
+	const API_FIND_DEV=1009;
+	const API_SET_ALARM=1100;
+	const API_SET_CONTACT_A=1101;
+	const API_SET_CONTACT_B=1102;
+	const API_SEND_MSG=1103;
+	const API_ADD_HONOR=1104;
+	const API_CLEAR_HONOR=1105;
+	const API_SET_SILENCE=1106;
+	const API_REMOTE_PHOTO=1107;
 
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
@@ -349,10 +368,10 @@ class HandleData {
 		// 上报结果
 		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
+		$global = new GlobalData\Client('127.0.0.1:2207');
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
-				return;
 				break;
 
 			case 'tk':
@@ -372,6 +391,16 @@ class HandleData {
 				}
 
 				break;
+			case 'API':
+				{
+					switch($message_data['info']){
+						case self::API_IS_ONLINE:
+							break;
+					}
+				}
+				break;
+				
+				//for debug
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
 					$file = file_get_contents ( 'test.amr' );
