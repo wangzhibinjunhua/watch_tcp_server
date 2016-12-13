@@ -1,12 +1,15 @@
 <?php
 require_once __DIR__ . '/../GlobalData/src/Client.php';
 require_once __DIR__ . '/../Statistics/Clients/StatisticClient.php';
+require_once __DIR__ . '/Channel/src/Client.php';
 use \GatewayWorker\Lib\Gateway;
 use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
 use \Workerman\Lib\Timer;
+use Channel;
+use Channel;
 class HandleData {
 	
 	//cmd
@@ -27,6 +30,8 @@ class HandleData {
 	const API_CLEAR_HONOR=1105;
 	const API_SET_SILENCE=1106;
 	const API_REMOTE_PHOTO=1107;
+	
+	const APP_TO_WATCH_EVENT='app_to_watch';
 
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
@@ -395,6 +400,7 @@ class HandleData {
 				break;
 			case 'API':
 				{
+			
 					switch($message_data['info']){
 						case self::API_IS_ONLINE:
 							break;
