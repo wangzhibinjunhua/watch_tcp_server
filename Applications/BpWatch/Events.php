@@ -20,6 +20,7 @@
 //declare(ticks=1);
 
 use \GatewayWorker\Lib\Gateway;
+require_once __DIR__ . '/../Statistics/Clients/StatisticClient.php';
 //use \Workerman\Lib\Timer;
 /**
  * 主逻辑

@@ -8,8 +8,7 @@ use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
 use \Workerman\Lib\Timer;
-use Channel;
-use Channel;
+
 class HandleData {
 	
 	//cmd
@@ -392,7 +391,7 @@ class HandleData {
 		// 上报结果
 		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
-		$global = new GlobalData\Client('127.0.0.1:2207');
+		
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
