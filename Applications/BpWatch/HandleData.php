@@ -10,7 +10,7 @@ use \GatewayWorker\Lib\Db;
 use \Workerman\Lib\Timer;
 
 class HandleData {
-	
+
 	//cmd
 	const API_IS_ONLINE=1001;
 	const API_SET_UPLODE_MODE=1002;
@@ -29,16 +29,16 @@ class HandleData {
 	const API_CLEAR_HONOR=1105;
 	const API_SET_SILENCE=1106;
 	const API_REMOTE_PHOTO=1107;
-	
+
 	const APP_TO_WATCH_EVENT='app_to_watch';
-	
-	public static function update_session_by_uid(string $uid, array $session)
+
+	public static function update_session_by_uid($uid, $session)
 	{
 		$client_id_arr=Gateway::getClientIdByUid($uid);
 		foreach ($client_id_arr as $client_id){
 			Gateway::updateSession($client_id, $session);
 		}
-		
+
 	}
 
 	public static function pack_data($data) {
@@ -155,11 +155,11 @@ class HandleData {
 			case 'SLEEP':
 				$health_type=3;
 				$start_time=$msg_msg[1];
-				$end_time=$msg_msg[2];
+				$total_time=$msg_msg[2];
 				$nsleep=$msg_msg[3];
 				$lsleep=$msg_msg[4];
 				$dsleep=$msg_msg[5];
-				$db->insert('watch_health_data')->cols(array('type'=>$health_type,'start_time'=>$start_time,'end_time'=>$end_time,'nsleep'=>$nsleep,'lsleep'=>$lsleep,'dsleep'=>$dsleep,'imei'=>$imei,'unix_time'=>time(),'create_time'=>$sys_time))->query();
+				$db->insert('watch_health_data')->cols(array('type'=>$health_type,'start_time'=>$start_time,'total_time'=>$total_time,'nsleep'=>$nsleep,'lsleep'=>$lsleep,'dsleep'=>$dsleep,'imei'=>$imei,'unix_time'=>time(),'create_time'=>$sys_time))->query();
 				break;
 			default:
 				break;
@@ -231,7 +231,7 @@ class HandleData {
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
 				//return;
 				break;
-	
+
 			case 'HR':
 				$code=3;
 				$rs='HA*'.$imei.'*HR';
@@ -346,7 +346,7 @@ class HandleData {
 				//return;
 				break;
 			case 'PING':
-				$code=12;
+				$code=13;
 				if($_SESSION['PING_ID'] == $imei){
 					Gateway::sendToClient($_SESSION['PING'], '1');
 				}
@@ -380,7 +380,7 @@ class HandleData {
 			return;
 		}
 		$id=$message_data['id'];
-		
+
 		Gateway::bindUid ( $client_id, $id );
 		//echo $message_data ['cmd'] . PHP_EOL;
 		//statistics
@@ -391,7 +391,7 @@ class HandleData {
 		// 上报结果
 		StatisticClient::report('bp_watch', 'app_data', $success, $code, $msg);
 		//end statistics
-		
+
 		switch ($message_data ['cmd']) {
 			case 'ping':
 				Gateway::sendToUid($id, self::pack_data($message));
@@ -423,17 +423,18 @@ class HandleData {
 								Gateway::sendToCurrentClient('0');
 								break;
 							}
-							$session=array('PING'=>$client_id,'PING_ID'=>$imei);
-							self::update_session_by_uid($imei, $session);
 							$rs='HA*'.$imei.'*PING';
 							Gateway::sendToUid($imei, self::pack_data($rs));
+							$session=array('PING'=>$client_id,'PING_ID'=>$imei);
+							self::update_session_by_uid($imei, $session);
+
 							break;
 						default:
 							break;
 					}
 				}
 				break;
-				
+
 				//for debug
 			case 'test' :
 				if ($message_data ['info'] == 'tk') {
