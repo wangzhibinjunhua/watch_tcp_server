@@ -32,6 +32,15 @@ class HandleData {
 	const API_REMOTE_PHOTO=1107;
 	
 	const APP_TO_WATCH_EVENT='app_to_watch';
+	
+	public static function update_session_by_uid(string $uid, array $session)
+	{
+		$client_id_arr=Gateway::getClientIdByUid($uid);
+		foreach ($client_id_arr as $client_id){
+			Gateway::updateSession($client_id, $session);
+		}
+		
+	}
 
 	public static function pack_data($data) {
 		$data_len = sprintf ( "%04x", strlen ( $data ) );
@@ -223,6 +232,7 @@ class HandleData {
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
 				//return;
 				break;
+	
 			case 'HR':
 				$code=3;
 				$rs='HA*'.$imei.'*HR';
@@ -336,6 +346,12 @@ class HandleData {
 				// }
 				//return;
 				break;
+			case 'PING':
+				$code=12;
+				if($_SESSION['PING_ID'] == $imei){
+					Gateway::sendToClient($_SESSION['PING'], '1');
+				}
+				break;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
 				//echo json_encode($rs_test).PHP_EOL;
@@ -365,6 +381,7 @@ class HandleData {
 			return;
 		}
 		$id=$message_data['id'];
+		
 		Gateway::bindUid ( $client_id, $id );
 		//echo $message_data ['cmd'] . PHP_EOL;
 		//statistics
@@ -400,9 +417,15 @@ class HandleData {
 				break;
 			case 'API':
 				{
-			
+					$imei=$message_data['imei'];
 					switch($message_data['info']){
 						case self::API_IS_ONLINE:
+							$session=array('PING'=>$client_id,'PING_ID'=>$imei);
+							self::update_session_by_uid($imei, $session);
+							$rs='HA*'.$imei.'*PING';
+							Gateway::sendToUid($imei, self::pack_data($rs));
+							break;
+						default:
 							break;
 					}
 				}
