@@ -339,6 +339,8 @@ class HandleData {
 				break;
 			default :
 				//return;
+				//无效数据关闭连接
+				Gateway::closeClient($client_id);
 				break;
 		}
 
@@ -452,6 +454,8 @@ class HandleData {
 				break;
 			default :
 				// code...
+				//无效数据关闭连接
+				Gateway::closeClient($client_id);
 				break;
 		}
 	}
