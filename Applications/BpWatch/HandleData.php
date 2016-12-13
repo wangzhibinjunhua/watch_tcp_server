@@ -420,6 +420,10 @@ class HandleData {
 					$imei=$message_data['imei'];
 					switch($message_data['info']){
 						case self::API_IS_ONLINE:
+							if(!Gateway::isUidOnline($imei)){
+								Gateway::sendToCurrentClient('0');
+								break;
+							}
 							$session=array('PING'=>$client_id,'PING_ID'=>$imei);
 							self::update_session_by_uid($imei, $session);
 							$rs='HA*'.$imei.'*PING';
