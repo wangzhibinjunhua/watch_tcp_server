@@ -350,9 +350,11 @@ class HandleData {
 				break;
 			case 'PING':
 				$code=13;
-				if($_SESSION['PING_ID'] == $imei){
-					Gateway::sendToClient($_SESSION['PING'], '1');
-				}
+				//if($_SESSION['PING_ID'] == $imei){
+					//Gateway::sendToClient($_SESSION['PING'], '1');
+				//}
+				//换种方式,不用操作session
+				Gateway::sendToUid($imei.'ping', '1');
 				break;
 			case 'TEST':
 				$rs_test=array('id'=>'12345678901','cmd'=>'test','info'=>'hahah123');
@@ -431,8 +433,10 @@ class HandleData {
 							}
 							$rs='HA*'.$imei.'*PING';
 							Gateway::sendToUid($imei, self::pack_data($rs));
-							$session=array('PING'=>$client_id,'PING_ID'=>$imei);
-							self::update_session_by_uid($imei, $session);
+							//$session=array('PING'=>$client_id,'PING_ID'=>$imei);
+							//self::update_session_by_uid($imei, $session);
+							//订阅这个imei的消息
+							Gateway::bindUid($client_id, $imei.'ping');
 
 							break;
 						default:
