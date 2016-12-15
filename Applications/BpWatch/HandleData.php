@@ -198,8 +198,11 @@ class HandleData {
 
 		$msg_msg = explode ( ',', $msg_array [2] );
 		$cmd = $msg_msg [0];
-
-		Gateway::bindUid ( $client_id, $imei );
+		
+		if(!isset($_SESSION['uid'])){
+			Gateway::bindUid ( $client_id, $imei );
+			$_SESSION['uid']=$imei;
+		}
 
 		/*if($cmd != 'LK'){
 			$global = new GlobalData\Client('127.0.0.1:2207');
@@ -380,8 +383,11 @@ class HandleData {
 			return;
 		}
 		$id=$message_data['id'];
-
-		Gateway::bindUid ( $client_id, $id );
+		
+		if(!isset($_SESSION['uid'])){
+			Gateway::bindUid ( $client_id, $id );
+			$_SESSION['uid']=$id;
+		}
 		//echo $message_data ['cmd'] . PHP_EOL;
 		//statistics
 		// 统计开始
