@@ -1,8 +1,9 @@
 <?php
+
 namespace Protocols;
 use Workerman\Connection\TcpConnection;
 use Config\Config;
-use Config;
+require_once __DIR__ . '/../../Statistics/Clients/StatisticClient.php';
 /**
  * for watch jajale
  * author wzb<wangzhibin_x@qq.com>
@@ -54,11 +55,11 @@ class Mytcp
         if(\Config\Config::DEBUG_STATISTICS){
         	//statistics
         	// 统计开始
-        	StatisticClient::tick("bp_watch", 'debug_data_receive');
+        	\StatisticClient::tick("bp_watch", 'debug_data_receive');
         	// 统计的产生，接口调用是否成功、错误码、错误日志
         	$success = false; $code = 20160001; $msg = $buffer;
         	// 上报结果
-        	StatisticClient::report('bp_watch', 'debug_data_receive', $success, $code, $msg);
+        	\StatisticClient::report('bp_watch', 'debug_data_receive', $success, $code, $msg);
         	//end statistics
         }
     	return substr($buffer, 4);
@@ -76,11 +77,11 @@ class Mytcp
     	if(\Config\Config::DEBUG_STATISTICS){
     		//statistics
     		// 统计开始
-    		StatisticClient::tick("bp_watch", 'debug_data_send');
+    		\StatisticClient::tick("bp_watch", 'debug_data_send');
     		// 统计的产生，接口调用是否成功、错误码、错误日志
     		$success = false; $code = 20160002; $msg = $buffer;
     		// 上报结果
-    		StatisticClient::report('bp_watch', 'debug_data_send', $success, $code, $msg);
+    		\StatisticClient::report('bp_watch', 'debug_data_send', $success, $code, $msg);
     		//end statistics
     	}
     	return $buffer;
