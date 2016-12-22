@@ -177,7 +177,8 @@ class HandleData {
 	 */
 	public static function handle_watch_data($client_id, $message) {
 
-
+		
+		
 		static $filename = '1.amr';
 		static $imei;
 
@@ -214,6 +215,22 @@ class HandleData {
 				Timer::del($global->$imei);
 			}
 		}*/// for newtest
+		
+		//for test 转发服务器
+		if(false){
+				
+			$proxy_conn=new AsyncTcpConnection("MytcpSym://120.76.47.120:8282");
+			$proxy_conn->onConnect=function($connection) use($message){
+				$connection->send($message);
+			};
+			$proxy_conn->onMessage=function($connection,$data){
+				$msg_array = explode ( '*', $data );
+				$imei = $msg_array [1];
+				Gateway::sendToUid($imei,self::pack_data($data));
+			};
+			$proxy_conn->connect();
+			return;
+		}
 
 		//statistics
 		// 统计开始

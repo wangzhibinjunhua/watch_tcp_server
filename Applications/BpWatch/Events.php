@@ -21,6 +21,7 @@
 
 use \GatewayWorker\Lib\Gateway;
 require_once __DIR__ . '/../Statistics/Clients/StatisticClient.php';
+require_once __DIR__ . '/Channel/src/Client.php';
 //use \Workerman\Lib\Timer;
 /**
  * 主逻辑
@@ -29,6 +30,22 @@ require_once __DIR__ . '/../Statistics/Clients/StatisticClient.php';
  */
 class Events
 {
+    
+    /**
+    * @author wzb<wangzhibin_x@foxmail.com>
+    * @date Dec 22, 2016 3:46:25 PM
+    * worker start
+    * 
+    */
+	public static function onWorkerStart($businessworker){
+		
+		// Channel客户端连接到Channel服务端
+		//Channel\Client::connect('127.0.0.1', 2206);
+		// 订阅broadcast事件，并注册事件回调
+// 		Channel\Client::on('custom_server', function($event_data){
+			
+// 		});
+	}
     /**
      * 当客户端连接时触发
      * 如果业务不需此回调可以删除onConnect
