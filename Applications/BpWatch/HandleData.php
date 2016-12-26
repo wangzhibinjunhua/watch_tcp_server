@@ -259,6 +259,15 @@ class HandleData {
 				self::async($imei,$message);
 				//return;
 				break;
+			case 'HRTIME':
+				$code=21;
+				break;
+			case 'BT':
+				$code=22;
+				break;
+			case 'ALERT':
+				$code=23;
+				break;
 			case 'BP':
 				$code=4;
 				$rs='HA*'.$imei.'*BP';
