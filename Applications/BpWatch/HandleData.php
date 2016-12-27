@@ -308,6 +308,63 @@ class HandleData {
 				self::async($imei,$message);
 				//return;
 				break;
+			case 'SOS':
+				$code=24;
+				break;
+			case 'FACTORY':
+				$code=25;
+				break;
+			case 'UPLOAD':
+				$code=26;
+				break;
+			case 'CALL':
+				$code=27;
+				break;
+			case 'SMS':
+				$code=28;
+				break;
+			case 'MONITOR':
+				$code=29;
+				break;
+			case 'VERNO':
+				$code=30;
+				break;
+			case 'RESET':
+				$code=31;
+				break;
+			case 'CR':
+				$code=32;
+				break;
+			case 'POWEROFF':
+				$code=33;
+				break;
+			case 'REMIND':
+				$code=34;
+				break;
+			case 'PHB':
+				$code=35;
+				break;
+			case'PHB2':
+				$code=36;
+				break;
+			case 'SILENCETIME':
+				$code=37;
+				break;
+			case 'VOLUME':
+				$code=38;
+				break;
+			case 'BRIGHTNESS':
+				$code=39;
+				break;
+			case 'CXYELL':
+				$code=40;
+				break;
+			case 'PEDO':
+				$code=41;
+				break;
+			case 'MESSAGE':
+				$code=42;
+				break;
 			// 语音
 			case 'TK' : // lencs*imei*tk,amr数据
 				$code=2;
