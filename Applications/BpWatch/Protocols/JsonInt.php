@@ -1,6 +1,7 @@
 <?php
 namespace Protocols;
 use Workerman\Connection\TcpConnection;
+require_once __DIR__ . '/../../Statistics/Clients/StatisticClient.php';
 /**
 * @author wzb<wangzhibin_x@foxmail.com>
 * @date Sep 1, 2016 4:01:48 PM
@@ -43,6 +44,16 @@ class JsonInt
 	 */
 	public static function decode($buffer)
 	{
+		if(\Config\Config::DEBUG_STATISTICS_APP){
+			//statistics
+			// 统计开始
+			\StatisticClient::tick("bp_watch_app", 'debug_data_receive');
+			// 统计的产生，接口调用是否成功、错误码、错误日志
+			$success = false; $code = 20160003; $msg = $buffer;
+			// 上报结果
+			\StatisticClient::report('bp_watch_app', 'debug_data_receive', $success, $code, $msg);
+			//end statistics
+		}
 		return substr($buffer, 4);
 	}
 
@@ -56,6 +67,16 @@ class JsonInt
 	{
 		//$rs_len=sprintf("%04x",strlen($buffer));//业务代码去实现
 		//return $rs_len.$buffer;
+		if(\Config\Config::DEBUG_STATISTICS_APP){
+			//statistics
+			// 统计开始
+			\StatisticClient::tick("bp_watch_app", 'debug_data_send');
+			// 统计的产生，接口调用是否成功、错误码、错误日志
+			$success = false; $code = 20160004; $msg = $buffer;
+			// 上报结果
+			\StatisticClient::report('bp_watch_app', 'debug_data_send', $success, $code, $msg);
+			//end statistics
+		}
 		return $buffer;
 	}
 }
