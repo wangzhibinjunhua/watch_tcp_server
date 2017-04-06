@@ -80,15 +80,15 @@ class Events
         // });
 
         //$handle=new HandleData();
-        if($_SERVER['GATEWAY_PORT'] == 10003){
+        if($_SERVER['GATEWAY_PORT'] == 10103){
             //$handle->handle_watch_data($client_id,$message);
             HandleData::handle_watch_data($client_id, $message);
 
-        }else if($_SERVER['GATEWAY_PORT'] == 10002){
+        }else if($_SERVER['GATEWAY_PORT'] == 10102){
 			HandleData::handle_server_data($client_id, $message);
 			Gateway::joinGroup($client_id,'app_g1');
             //$handle->handle_server_data($client_id,$message);
-        }else if($_SERVER['GATEWAY_PORT'] == 9999){//for debug
+        }else if($_SERVER['GATEWAY_PORT'] == 9997){//for debug
         	//statistics
         	// 统计开始
         	StatisticClient::tick("bp_watch", 'debug_data');

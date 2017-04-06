@@ -26,7 +26,7 @@ Autoloader::setRootPath(__DIR__);
 // gateway 进程，这里使用Text协议，可以用telnet测试
 //$gateway = new Gateway("Text://120.24.36.177:8282");
 
-$debug = new Gateway("Websocket://0.0.0.0:9999");
+$debug = new Gateway("Websocket://0.0.0.0:9997");
 // gateway名称，status方便查看
 $debug->name = 'watch_server_debug_websocket';
 // gateway进程数
@@ -35,9 +35,9 @@ $debug->count = 8;
 $debug->lanIp = '127.0.0.1';
 // 内部通讯起始端口，假如$gateway->count=4，起始端口为4000
 // 则一般会使用4000 4001 4002 4003 4个端口作为内部通讯端口
-$debug->startPort = 2962;
+$debug->startPort = 3012;
 // 服务注册地址
-$debug->registerAddress = '127.0.0.1:1330';
+$debug->registerAddress = '127.0.0.1:1430';
 
 // 心跳间隔
 //$gateway->pingInterval = 10;

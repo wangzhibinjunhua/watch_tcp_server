@@ -23,12 +23,12 @@ Autoloader::setRootPath(__DIR__);
 
 // #### 内部推送端口(假设当前服务器内网ip为192.168.100.100) ####
 //$internal_gateway = new Gateway("Text://10.44.125.196:8283");
-$internal_gateway = new Gateway("JsonInt://0.0.0.0:10002");
+$internal_gateway = new Gateway("JsonInt://0.0.0.0:10102");
 $internal_gateway->name='watch_server_internalGateway';
 $internal_gateway->count=8;
-$internal_gateway->startPort = 2822;
+$internal_gateway->startPort = 3002;
 // 端口为start_register.php中监听的端口，聊天室默认是1236
-$internal_gateway->registerAddress = '127.0.0.1:1330';
+$internal_gateway->registerAddress = '127.0.0.1:1430';
 // #### 内部推送端口设置完毕 ####
 
 // 心跳间隔

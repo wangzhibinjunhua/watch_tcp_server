@@ -234,7 +234,7 @@ class HandleData {
 
 		//statistics
 		// 统计开始
-		StatisticClient::tick("bp_watch", 'watch_data');
+		StatisticClient::tick("water_sales_hw", 'hw_data');
 		// 统计的产生，接口调用是否成功、错误码、错误日志
 		$success = true; $code = 0; $msg = '';
 		// 上报结果
@@ -246,10 +246,18 @@ class HandleData {
 			// 链路保持
 			case 'LK' :
 				$code=1;
-				$rs_lk = 'HA*' . $imei . '*LK';
+				$rs_lk = 'WD*' . $imei . '*LK';
 				// $rs_lk_len=sprintf("%04x",strlen($rs));
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_lk ) );
 				//return;
+				break;
+			case 'CONS':
+				$rs='WD*'.$imei.'*CONS';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
+				break;
+			case 'GCI':
+				$rs='WD*'.$imei.'*GCI';
+				Gateway::sendToUid ( $imei, self::pack_data ( $rs ) );
 				break;
 
 			case 'HR':
