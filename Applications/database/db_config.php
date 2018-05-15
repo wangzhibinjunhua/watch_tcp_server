@@ -2,7 +2,7 @@
 
 $db_host="localhost:3306";
 $db_user="root";
-$db_password="huayingtekmysql20160709";
+$db_password="123456root";
 $db_name="health";
 
 /**
