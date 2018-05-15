@@ -219,7 +219,7 @@ class HandleData {
 		//for test 转发服务器
 		if(false){
 				
-			$proxy_conn=new AsyncTcpConnection("MytcpSym://120.76.47.120:8282");
+			$proxy_conn=new AsyncTcpConnection("MytcpSym://192.168.16.101:8282");
 			$proxy_conn->onConnect=function($connection) use($message){
 				$connection->send($message);
 			};
