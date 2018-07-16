@@ -122,7 +122,8 @@ class EventsLbsCommon {
  		$unix_time=time();
  		$msg=" '$imei','$gps_lon','$gps_lat','$watch_time','$sys_time','$location_lon','$location_lat','$location_content','$location_type','$ud_content','$battery','$unix_time'";
 
-		self::save_db($msg);
+		//self::save_db($msg);
+		self::save_mysql($imei,$gps_lon,$gps_lat,$sys_time,$unix_time,$watch_time);
 	}
 
 
@@ -154,5 +155,14 @@ class EventsLbsCommon {
 		//echo $msg;
 		$redis_watch->rPush("watch_info",$msg);
 		$redis_watch->close();
+	}
+
+
+	public static function save_mysql($imei,$gps_lon,$gps_lat,$sys_time,$unix_time,$watch_time)
+	{
+		
+		$db=Db::instance('db_watch');
+		$sys_time=date("Y-m-d H:i:s");
+		$db->insert('watch_info')->cols(array('imei'=>$imei,'gps_lon'=>$gps_lon,'gps_lat'=>$gps_lat,'system_time'=>$sys_time,'unix_time'=>$unix_time,'watch_time'=>$watch_time))->query();
 	}
 }
