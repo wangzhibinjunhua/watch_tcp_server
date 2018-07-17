@@ -31,7 +31,7 @@ class EventsLbsCommon {
 	public static function parse($data) {
 		$ud_content=$data;
 		$data_arr = explode ( ',', $data );
-		var_dump ( $data_arr );
+		//var_dump ( $data_arr );
 		$imei = substr ( $data_arr [0], 3, 15 );
 		$date = $data_arr [1];
 		$time = $data_arr [2];

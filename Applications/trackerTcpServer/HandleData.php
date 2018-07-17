@@ -197,7 +197,7 @@ class HandleData {
 				$photo_jpg=substr ( $message, $photo_header, strlen ( $message ) - $photo_header );
 				$p_filename=$imei.'_'.time(). '.jpg';
 				$p_filepath = '/var/www/html/core/media/childwatch/' . $p_filename;
-				file_put_contents ( $p_filepath, $photo_jpg, FILE_APPEND );
+				file_put_contents ( $p_filepath, base64_decode($photo_jpg), FILE_APPEND );
 				$rs_p='CS*' . $imei . '*PHOTO,1';
 				Gateway::sendToUid ( $imei, self::pack_data ( $rs_p ) );
 				//异步处理

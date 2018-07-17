@@ -23,7 +23,7 @@ class Mytcp
      */
     public static function input($buffer, TcpConnection $connection)
     {
-        #echo "## ".$buffer;
+        //echo "## ".$buffer;
         if (strlen($buffer) < 21) {
             //return 0;
             //合法长度
