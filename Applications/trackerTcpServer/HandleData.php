@@ -28,7 +28,9 @@ class HandleData {
 
 							//echo $tel.PHP_EOL;
 							$tk_notiy=array('id'=>$tel,'cmd'=>'TK','info'=>1);
-							Gateway::sendToUid($tel,self::pack_data(json_encode($tk_notiy)));
+							$data_len = sprintf ( "%04x", strlen (json_encode($tk_notiy) ) );
+							Gateway::sendToUid($tel,$data_len.json_encode($tk_notiy));
+							//Gateway::sendToUid($tel,slef::pack_data(json_encode($tk_notiy)));
 						}
 					}
 
@@ -217,6 +219,11 @@ class HandleData {
 				Gateway::sendToUid ( '12345678901', self::pack_data ( json_encode($rs_test)) );
 				return;
 				break;
+			case 'SSOS':
+					$rs_ssos=array('id'=>'13012345678','cmd'=>'ssos','info'=>1);
+					Gateway::sendToUid ( '13012345678', self::pack_data ( json_encode($rs_ssos)) );
+					
+					return; 
 			default :
 				return;
 		}

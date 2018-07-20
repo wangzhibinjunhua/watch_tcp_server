@@ -163,6 +163,6 @@ class EventsLbsCommon {
 		
 		$db=Db::instance('db_watch');
 		$sys_time=date("Y-m-d H:i:s");
-		$db->insert('watch_info')->cols(array('imei'=>$imei,'gps_lon'=>$gps_lon,'gps_lat'=>$gps_lat,'system_time'=>$sys_time,'unix_time'=>$unix_time,'watch_time'=>$watch_time))->query();
+		$db->insert('watch_info')->cols(array('imei'=>$imei,'location_lon'=>$gps_lon,'location_lat'=>$gps_lat,'system_time'=>$sys_time,'unix_time'=>$unix_time,'watch_time'=>$watch_time))->query();
 	}
 }
