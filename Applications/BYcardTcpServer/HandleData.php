@@ -4,6 +4,8 @@ use Events\Lbs\EventsLbsCommon;
 use Events\WeatherService\WeatherService;
 use Workerman\Connection\AsyncTcpConnection;
 use \GatewayWorker\Lib\Db;
+use Events\Cmd;
+
 class HandleData {
 	
 	public static function get_curr_time(){
@@ -132,7 +134,7 @@ class HandleData {
 		}
 		//end
 
-		$msg_array = explode ( "/,|\*/", $message );
+		$msg_array = preg_split( "/,|\*/", $message );
 	
 		$down_num = $msg_array [0];
 		$imei = $msg_array [1];
