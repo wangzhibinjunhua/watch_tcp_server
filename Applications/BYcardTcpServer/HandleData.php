@@ -134,7 +134,7 @@ class HandleData {
 		}
 		//end
 
-		$msg_array = preg_split( "/,|\*/", $message );
+		$msg_array = preg_split ( "/,|\*/", $message );
 	
 		$down_num = $msg_array [0];
 		$imei = $msg_array [1];
